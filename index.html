@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#08080f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>🎤 SPEAK OR DIE — Pro golos Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0d0d1a;--bg2:#1a1a2e;--bg3:#16213e;
+  --accent:#e94560;--accent2:#533483;
+  --gold:#ffd700;--green:#00ff88;--blue:#00b4d8;
+  --text:#e8e8f0;--muted:#7070a0;
+  --card:#1e1e3a;--border:#2a2a4a;--r:12px
+}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+.screen{display:none;min-height:100vh;min-height:100dvh;flex-direction:column;padding:0 16px 40px;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right));padding-bottom:calc(40px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto;width:100%;box-sizing:border-box}
+.screen.active{display:flex}
+h1{font-size:clamp(2rem,8vw,3.5rem);font-weight:900;letter-spacing:-1px}
+h2{font-size:clamp(1.3rem,5vw,1.8rem);font-weight:700}
+h3{font-size:1.05rem;font-weight:600}
+p{line-height:1.6;color:var(--muted)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 24px;border-radius:var(--r);border:none;cursor:pointer;font-size:.95rem;font-weight:600;transition:all .18s;text-decoration:none}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:active{filter:brightness(.9)}
+.btn-secondary{background:var(--card);color:var(--text);border:1px solid var(--border)}
+.btn-ghost{background:transparent;color:var(--muted)}
+.btn-gold{background:var(--gold);color:#0d0d1a}
+.btn-green{background:var(--green);color:#0d0d1a}
+.btn-lg{font-size:1.1rem;padding:16px 32px;border-radius:14px}
+.btn-sm{font-size:.82rem;padding:7px 14px}
+.btn-full{width:100%}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px}
+.card-glow{border-color:var(--accent);box-shadow:0 0 24px rgba(233,69,96,.15)}
+
+.nav{display:flex;align-items:center;gap:8px;padding:16px 0 8px}
+.back-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.6rem;line-height:1;padding:4px}
+
+.stat-row{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.stat-label{display:flex;justify-content:space-between;font-size:.8rem}
+.stat-bar{height:7px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.stat-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.fill-red{background:linear-gradient(90deg,var(--accent),#ff6b6b)}
+.fill-gold{background:linear-gradient(90deg,var(--gold),#ffaa00)}
+.fill-green{background:linear-gradient(90deg,var(--green),#00cc66)}
+.fill-blue{background:linear-gradient(90deg,var(--blue),#0080a0)}
+
+canvas{width:100%;border-radius:var(--r);background:var(--bg3);display:block}
+
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.73rem;font-weight:600}
+.badge-red{background:rgba(233,69,96,.2);color:var(--accent);border:1px solid rgba(233,69,96,.3)}
+.badge-gold{background:rgba(255,215,0,.15);color:var(--gold);border:1px solid rgba(255,215,0,.3)}
+.badge-green{background:rgba(0,255,136,.15);color:var(--green);border:1px solid rgba(0,255,136,.3)}
+.badge-blue{background:rgba(0,180,216,.15);color:var(--blue);border:1px solid rgba(0,180,216,.3)}
+
+.profiles-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.profile-card{cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px 10px;text-align:center;transition:all .18s;background:var(--card)}
+.profile-card:active{transform:scale(.97)}
+.profile-card.selected{border-color:var(--accent);background:rgba(233,69,96,.1)}
+.profile-emoji{font-size:2.2rem;margin-bottom:6px}
+.profile-name{font-weight:700;font-size:.9rem;margin-bottom:3px}
+.profile-rule{font-size:.72rem;color:var(--muted);line-height:1.3}
+
+.mic-btn{width:90px;height:90px;border-radius:50%;border:none;cursor:pointer;font-size:2.2rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin:0 auto}
+.mic-btn.idle{background:var(--bg3);color:var(--muted);border:2px solid var(--border)}
+.mic-btn.recording{background:var(--accent);animation:pulse 1.4s infinite;box-shadow:0 0 0 0 rgba(233,69,96,.6)}
+.mic-btn.stopped{background:var(--bg3);color:var(--text);border:2px solid var(--border)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(233,69,96,.6)}70%{box-shadow:0 0 0 22px rgba(233,69,96,0)}100%{box-shadow:0 0 0 0 rgba(233,69,96,0)}}
+
+.timer{font-size:3.2rem;font-weight:900;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:-2px;line-height:1}
+.timer.warning{color:var(--accent);animation:blink .5s infinite alternate}
+@keyframes blink{from{opacity:1}to{opacity:.35}}
+
+.task-card{border:2px solid var(--gold);border-radius:var(--r);padding:18px;background:rgba(255,215,0,.05);text-align:center;margin:10px 0}
+.task-title{color:var(--gold);font-size:.75rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:7px}
+.task-text{font-size:1.05rem;font-weight:600;line-height:1.4;color:var(--text)}
+.task-time{margin-top:7px;font-size:.78rem;color:var(--muted)}
+
+.provocation{position:fixed;bottom:110px;left:16px;right:16px;background:rgba(20,5,30,.97);border:2px solid var(--accent);border-radius:var(--r);padding:14px;font-weight:600;text-align:center;animation:slideUp .25s ease;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,.6)}
+@keyframes slideUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.result-stat{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.result-num{font-size:1.9rem;font-weight:900;line-height:1;margin-bottom:3px}
+.result-label{font-size:.72rem;color:var(--muted)}
+
+.type-card{background:linear-gradient(135deg,rgba(83,52,131,.6),var(--bg2));border:1px solid var(--border);border-radius:18px;padding:28px 20px;text-align:center;margin:12px 0}
+.type-emoji{font-size:3.5rem;margin-bottom:10px}
+.type-title{font-size:1.4rem;font-weight:900;margin-bottom:6px}
+
+.boss-card{border:2px solid var(--accent);border-radius:var(--r);padding:18px;text-align:center;background:rgba(233,69,96,.05)}
+.boss-hp{height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;margin:7px 0}
+.boss-hp-fill{height:100%;background:linear-gradient(90deg,var(--accent),#ff3366);transition:width .5s}
+
+.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.skill-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px;display:flex;align-items:start;gap:8px;cursor:pointer;transition:border-color .15s}
+.skill-item.can-buy{border-color:rgba(255,215,0,.4)}
+.skill-item.unlocked{border-color:var(--gold);background:rgba(255,215,0,.05)}
+.skill-item.locked{opacity:.45;cursor:not-allowed}
+.skill-icon{font-size:1.4rem;flex-shrink:0}
+.skill-name{font-size:.82rem;font-weight:600;margin-bottom:2px}
+.skill-cost{font-size:.72rem;color:var(--gold)}
+.skill-effect{font-size:.7rem;color:var(--muted);margin-top:2px}
+
+.level-badge{display:inline-flex;align-items:center;gap:5px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:.82rem;font-weight:600}
+
+.playback-bar{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:11px 14px;margin:7px 0}
+.play-btn{width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;background:var(--accent);color:#fff;font-size:.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.playback-info{flex:1}
+.playback-label{font-size:.75rem;color:var(--muted)}
+
+.pvp-halves{display:flex;gap:10px;margin-bottom:12px}
+.pvp-player{flex:1;border:2px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;background:var(--card);transition:border-color .2s}
+.pvp-player.active{border-color:var(--accent);background:rgba(233,69,96,.07)}
+.pvp-player.done{border-color:var(--green)}
+.pvp-vs{font-size:1.4rem;font-weight:900;color:var(--accent);align-self:center;flex-shrink:0}
+
+.transcript-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:10px;min-height:52px;font-size:.88rem;line-height:1.6;color:var(--text);max-height:90px;overflow-y:auto}
+.parasite-hl{background:rgba(233,69,96,.28);border-radius:3px;color:var(--accent)}
+
+.pitch-display{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin:7px 0}
+.pitch-item{background:var(--bg3);border-radius:8px;padding:8px;text-align:center}
+.pitch-val{font-size:1.2rem;font-weight:700;line-height:1.1}
+.pitch-lbl{font-size:.68rem;color:var(--muted);margin-top:2px}
+
+.flex{display:flex}.gap-8{gap:8px}.gap-10{gap:10px}.gap-12{gap:12px}
+.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}
+.mb-8{margin-bottom:8px}.mb-12{margin-bottom:12px}.mb-16{margin-bottom:16px}
+.center{text-align:center}.sb{justify-content:space-between}.ac{align-items:center}
+.muted{color:var(--muted)}.text-sm{font-size:.85rem}.text-xs{font-size:.75rem}
+.fw-bold{font-weight:700}.text-accent{color:var(--accent)}.text-gold{color:var(--gold)}.text-green{color:var(--green)}
+.hidden{display:none!important}
+
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:10px 18px;font-size:.88rem;z-index:999;white-space:nowrap;animation:fadeInOut 2.5s ease forwards}
+@keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(-8px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}70%{opacity:1}100%{opacity:0;transform:translateX(-50%) translateY(-8px)}}
+
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ── AUDIT BLOCK ── */
+.audit-block{background:linear-gradient(135deg,rgba(83,52,131,.45) 0%,rgba(20,10,40,.9) 100%);border:1.5px solid rgba(180,120,255,.35);border-radius:18px;padding:22px 18px;margin-top:20px}
+.audit-block-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(180,120,255,.18);border:1px solid rgba(180,120,255,.35);border-radius:20px;padding:4px 12px;font-size:.72rem;font-weight:700;color:#c48eff;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px}
+.audit-headline{font-size:1.15rem;font-weight:800;line-height:1.3;color:var(--text);margin-bottom:6px}
+.audit-sub{font-size:.84rem;color:var(--muted);line-height:1.5;margin-bottom:14px}
+.audit-skills{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+.audit-skill-tag{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:5px 12px;font-size:.78rem;font-weight:600;color:var(--text)}
+.audit-divider{height:1px;background:rgba(180,120,255,.2);margin:14px 0}
+.audit-person{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.audit-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#8855cc,#cc44aa);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;border:2px solid rgba(180,120,255,.4)}
+.audit-name{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:2px}
+.audit-creds{font-size:.73rem;color:#c48eff;line-height:1.4}
+.audit-cta-primary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 20px;border-radius:12px;border:none;cursor:pointer;font-size:.95rem;font-weight:700;background:linear-gradient(135deg,#8855cc,#cc44aa);color:#fff;text-decoration:none;margin-bottom:9px}
+.audit-cta-ghost{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px 20px;border-radius:12px;border:1.5px solid rgba(180,120,255,.4);background:transparent;color:#c48eff;font-size:.88rem;font-weight:600;cursor:pointer;text-decoration:none}
+.audit-cta-primary:active,.audit-cta-ghost:active{filter:brightness(.85)}
+.audit-note{font-size:.7rem;color:var(--muted);text-align:center;margin-top:10px;line-height:1.4}
+
+/* ── PRO GOLOS BRAND ── */
+.pg-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(136,85,204,.18);border:1px solid rgba(180,120,255,.3);border-radius:20px;padding:4px 12px;font-size:.72rem;font-weight:700;color:#c48eff;letter-spacing:.3px}
+
+.viz-wrap{position:relative;margin:8px 0}
+.viz-label{position:absolute;top:4px;right:8px;font-size:.68rem;color:var(--muted)}
+
+.cmp-row{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border)}
+.cmp-val{flex:1;text-align:center;font-size:.88rem}
+.cmp-lbl{flex:1.2;text-align:center;font-size:.72rem;color:var(--muted)}
+.cmp-win{font-weight:700;color:var(--green)}
+
+/* ── TOURNAMENT ── */
+.tn-pills{display:flex;gap:7px;overflow-x:auto;padding:6px 0 10px;-webkit-overflow-scrolling:touch}
+.tn-pills::-webkit-scrollbar{height:3px}
+.tn-pill{flex-shrink:0;padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:600;border:2px solid var(--border);background:var(--card);color:var(--muted);transition:all .18s}
+.tn-pill.active{border-color:var(--accent);background:rgba(233,69,96,.15);color:var(--text)}
+.tn-pill.done{border-color:var(--green);background:rgba(0,255,136,.08);color:var(--green)}
+
+.tn-player-row{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:7px}
+.tn-player-num{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tn-player-input{flex:1;background:transparent;border:none;color:var(--text);font-size:.92rem;outline:none}
+.tn-remove-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem;padding:2px 6px;border-radius:6px;transition:color .15s}
+.tn-remove-btn:hover{color:var(--accent)}
+
+.tn-time-selector{display:flex;gap:8px;margin:8px 0 16px}
+.tn-time-btn{flex:1;padding:9px;border-radius:10px;border:2px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;font-size:.85rem;font-weight:600;transition:all .18s;text-align:center}
+.tn-time-btn.selected{border-color:var(--accent);color:var(--text);background:rgba(233,69,96,.1)}
+
+.tn-rank-row{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:var(--card);border:1px solid var(--border);margin-bottom:7px;transition:all .15s}
+.tn-rank-row.winner{border-color:var(--gold);background:rgba(255,215,0,.08)}
+.tn-rank-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0}
+.tn-rank-name{flex:1;font-weight:600;font-size:.92rem}
+.tn-rank-score{font-size:1.3rem;font-weight:900;color:var(--gold)}
+.tn-rank-details{font-size:.7rem;color:var(--muted);margin-top:1px}
+
+/* ═══════════════════════════════════════════════════════
+   PREMIUM VISUAL LAYER v4.2 — Ethereal Glass · Awwwards-tier
+   (additive overrides — не меняет DOM/логику)
+   ═══════════════════════════════════════════════════════ */
+:root{
+  --ease:cubic-bezier(.32,.72,0,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --hairline:rgba(255,255,255,.09);
+  --glow-red:rgba(233,69,96,.55);
+  --r:16px;
+}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:'Manrope','Segoe UI',system-ui,sans-serif;
+  background:#08080f;
+  letter-spacing:-.011em;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,textarea,select{font-family:inherit}
+/* ambient mesh-gradient orbs (fixed, GPU, behind everything) */
+body::before{
+  content:'';position:fixed;inset:-25%;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(38vmax 38vmax at 16% 10%, rgba(233,69,96,.20), transparent 60%),
+    radial-gradient(44vmax 44vmax at 88% 20%, rgba(120,70,190,.24), transparent 62%),
+    radial-gradient(48vmax 48vmax at 50% 96%, rgba(0,180,216,.13), transparent 60%),
+    radial-gradient(30vmax 30vmax at 80% 82%, rgba(255,215,0,.09), transparent 58%);
+  animation:orbDrift 26s var(--ease) infinite alternate;
+  will-change:transform;
+}
+@keyframes orbDrift{0%{transform:translate3d(-2%,-1%,0) scale(1)}100%{transform:translate3d(2%,2.5%,0) scale(1.09)}}
+/* fine film grain */
+body::after{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.04;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* premium display type */
+h1,h2,h3,.timer,.result-num,.tn-rank-score,.pitch-val,.type-title,.audit-headline,.profile-emoji{
+  font-family:'Space Grotesk','Segoe UI',sans-serif;
+}
+h1{letter-spacing:-.035em;line-height:.92}
+h2,h3{letter-spacing:-.02em}
+.timer{letter-spacing:-.04em}
+
+/* screen entry choreography */
+.screen.active{animation:screenIn .55s var(--ease-out) both}
+@keyframes screenIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* magnetic buttons */
+.btn{
+  transition:transform .45s var(--ease),filter .3s var(--ease),box-shadow .35s var(--ease),background .3s var(--ease);
+  border-radius:14px;letter-spacing:-.01em;
+}
+.btn:active{transform:scale(.965)}
+.btn-lg{border-radius:17px}
+.btn-primary{
+  background:linear-gradient(135deg,#ff5d78 0%,var(--accent) 55%,#c8324f 100%);
+  box-shadow:0 10px 30px -10px var(--glow-red),inset 0 1px 0 rgba(255,255,255,.28);
+}
+.btn-primary:active{box-shadow:0 5px 16px -10px var(--glow-red),inset 0 1px 0 rgba(255,255,255,.2)}
+.btn-gold{background:linear-gradient(135deg,#ffe463,var(--gold) 60%,#e6a700);box-shadow:0 10px 28px -12px rgba(255,215,0,.5),inset 0 1px 0 rgba(255,255,255,.4)}
+.btn-green{background:linear-gradient(135deg,#4dffa8,var(--green) 60%,#00cc70);box-shadow:0 10px 28px -12px rgba(0,255,136,.45),inset 0 1px 0 rgba(255,255,255,.35)}
+.btn-secondary{background:linear-gradient(180deg,rgba(40,40,72,.7),rgba(26,26,48,.85));border:1px solid var(--hairline);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+
+/* glass depth for cards (no blur on scroll content — perf) */
+.card{
+  background:linear-gradient(180deg,rgba(40,40,72,.62),rgba(20,20,40,.72));
+  border:1px solid var(--hairline);border-radius:18px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 22px 44px -26px rgba(0,0,0,.85);
+}
+.card-glow{
+  border-color:rgba(233,69,96,.42);
+  box-shadow:0 0 0 1px rgba(233,69,96,.14),0 24px 56px -22px var(--glow-red),inset 0 1px 0 rgba(255,255,255,.09);
+}
+.task-card{border-radius:18px;box-shadow:0 0 0 1px rgba(255,215,0,.1),0 20px 44px -26px rgba(255,180,0,.35),inset 0 1px 0 rgba(255,255,255,.06)}
+.boss-card,.audit-block{box-shadow:0 24px 56px -24px rgba(233,69,96,.35),inset 0 1px 0 rgba(255,255,255,.07)}
+
+/* mic button — machined + glow */
+.mic-btn{transition:transform .4s var(--ease),box-shadow .4s var(--ease),background .3s var(--ease)}
+.mic-btn:active{transform:scale(.93)}
+.mic-btn.stopped,.mic-btn.idle{
+  background:radial-gradient(circle at 32% 28%,#2a2a52,#131327);
+  box-shadow:0 12px 30px -14px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.14),inset 0 -2px 6px rgba(0,0,0,.5);
+}
+.mic-btn.recording{background:radial-gradient(circle at 32% 28%,#ff6b83,var(--accent))}
+
+/* interactive cards press physics */
+.profile-card,.skill-item,.tn-time-btn,.tn-pill{transition:transform .35s var(--ease),border-color .25s var(--ease),background .25s var(--ease),box-shadow .3s var(--ease)}
+.profile-card:active{transform:scale(.96)}
+.profile-card.selected{box-shadow:0 0 0 1px var(--accent),0 16px 36px -20px var(--glow-red)}
+.profile-card:hover,.skill-item.can-buy:hover{border-color:rgba(233,69,96,.4)}
+
+/* shimmering stat fills */
+.stat-fill,.boss-hp-fill{position:relative;overflow:hidden}
+.stat-fill::after,.boss-hp-fill::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
+  transform:translateX(-100%);animation:barShimmer 2.8s var(--ease) infinite;
+}
+@keyframes barShimmer{0%{transform:translateX(-100%)}55%,100%{transform:translateX(220%)}}
+
+/* pills & badges glow */
+.pg-badge{box-shadow:0 0 20px -6px rgba(136,85,204,.5),inset 0 1px 0 rgba(255,255,255,.1)}
+.level-badge{background:linear-gradient(180deg,rgba(40,40,72,.75),rgba(26,26,48,.85));border-color:var(--hairline);box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
+
+/* glass overlays (fixed → blur allowed) */
+.provocation{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:rgba(24,8,32,.85);border-radius:16px;box-shadow:0 20px 60px -18px rgba(0,0,0,.8),0 0 0 1px rgba(233,69,96,.4)}
+.toast{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:rgba(30,30,58,.8);border-color:var(--hairline);box-shadow:0 16px 40px -18px rgba(0,0,0,.7)}
+
+/* audit CTA lift */
+.audit-cta-primary{box-shadow:0 12px 30px -12px rgba(180,80,200,.55),inset 0 1px 0 rgba(255,255,255,.25);transition:transform .4s var(--ease),filter .3s var(--ease)}
+.audit-cta-primary:active{transform:scale(.97)}
+
+/* refined canvas + transcript */
+canvas{box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 10px 26px -20px rgba(0,0,0,.7)}
+.transcript-box{background:linear-gradient(180deg,rgba(22,33,62,.7),rgba(16,22,42,.8));border-color:var(--hairline)}
+
+/* accessibility: honor reduced motion */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.08s!important}
+}
+
+/* ── ICON SYSTEM — thin-line inline SVG, replaces emoji everywhere ── */
+.icon{width:1em;height:1em;display:inline-block;vertical-align:-0.15em;flex-shrink:0}
+.icon-sm{width:.85em;height:.85em}
+.icon-lg{width:1.5em;height:1.5em}
+.mic-btn .icon{width:1em;height:1em}
+.play-btn .icon{width:.85em;height:.85em;margin-left:1px}
+.icon-gold{color:var(--gold)}
+.icon-accent{color:var(--accent)}
+.icon-green{color:var(--green)}
+.icon-muted{color:var(--muted)}
+.icon-rec{color:var(--accent);animation:recPulse 1.1s ease infinite}
+@keyframes recPulse{0%,100%{opacity:1}50%{opacity:.35}}
+.reason-row{display:flex;align-items:center;gap:7px}
+.reason-row .icon{flex-shrink:0}
+.medal-gold{color:#1a1400}.medal-silver{color:#1a1a1a}.medal-bronze{color:#2a1400}
+</style>
+</head>
+<body>
+
+<!-- ═══ ICON SYSTEM — Phosphor-Light-style inline SVG sprite (self-contained, no CDN) ═══ -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+<defs>
+<symbol id="i-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></symbol>
+<symbol id="i-trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10v5a5 5 0 0 1-10 0V3Z"/><path d="M7 4.5H4.2A2.7 2.7 0 0 0 7 8"/><path d="M17 4.5h2.8A2.7 2.7 0 0 1 17 8"/><line x1="12" y1="13" x2="12" y2="17"/><path d="M8 21h8"/><path d="M9 21c0-2.2 1.2-3.2 3-3.2s3 1 3 3.2"/></symbol>
+<symbol id="i-swords" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/><circle cx="5" cy="5" r="1.3" fill="currentColor" stroke="none"/><circle cx="19" cy="5" r="1.3" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H12v18H6.5A2.5 2.5 0 0 1 4 18.5v-13Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H12v18h5.5a2.5 2.5 0 0 0 2.5-2.5v-13Z"/></symbol>
+<symbol id="i-gamepad" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="5"/><line x1="7" y1="10.5" x2="7" y2="14.5"/><line x1="5" y1="12.5" x2="9" y2="12.5"/><circle cx="16" cy="10.5" r="1" fill="currentColor" stroke="none"/><circle cx="18.5" cy="13" r="1" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-sparkle" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2Z"/></symbol>
+<symbol id="i-cap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2 9l10 5 10-5-10-5Z"/><path d="M6 11.5V17c0 1.5 2.7 3 6 3s6-1.5 6-3v-5.5"/><line x1="22" y1="9" x2="22" y2="15"/></symbol>
+<symbol id="i-flame" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 3-3 4-3 8a3 3 0 0 0 6 0c0-1.2-.5-2-1-2.8 1.8.6 4 2.6 4 6.3a6 6 0 0 1-12 0C6 8.5 10 7 12 2Z"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.6-9.5-9C.8 7.8 2.4 4 6 4c2 0 3.5 1.1 6 3.8C14.5 5.1 16 4 18 4c3.6 0 5.2 3.8 3.5 7-2.5 4.4-9.5 9-9.5 9Z"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></symbol>
+<symbol id="i-bug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="5"/><line x1="12" y1="8" x2="12" y2="5"/><line x1="9" y1="9.5" x2="6" y2="7"/><line x1="15" y1="9.5" x2="18" y2="7"/><line x1="7" y1="13" x2="3" y2="13"/><line x1="17" y1="13" x2="21" y2="13"/><line x1="9" y1="17" x2="6" y2="20"/><line x1="15" y1="17" x2="18" y2="20"/></symbol>
+<symbol id="i-music" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 18V5l12-2v13"/></symbol>
+<symbol id="i-speaker" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path d="M17 8a5 5 0 0 1 0 8"/><path d="M19.5 5.5a9 9 0 0 1 0 13"/></symbol>
+<symbol id="i-timer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><line x1="12" y1="13" x2="12" y2="9"/><line x1="12" y1="13" x2="15" y2="14.5"/><line x1="10" y1="2" x2="14" y2="2"/><line x1="12" y1="2" x2="12" y2="5"/></symbol>
+<symbol id="i-mask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r="1" fill="currentColor" stroke="none"/><path d="M8 15c1.5 2 6.5 2 8 0"/></symbol>
+<symbol id="i-wind" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h11a3 3 0 1 0-3-3"/><path d="M3 16h15a3 3 0 1 1-3 3"/><path d="M3 12h8"/></symbol>
+<symbol id="i-ruler" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9" width="18" height="6" rx="1.2"/><line x1="7" y1="9" x2="7" y2="12"/><line x1="11" y1="9" x2="11" y2="12"/><line x1="15" y1="9" x2="15" y2="12"/></symbol>
+<symbol id="i-mountain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19 9 7l4 6 2-3 6 9H3Z"/></symbol>
+<symbol id="i-wave" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11c2-3 4-3 6 0s4 3 6 0 4-3 6 0"/><path d="M2 16c2-3 4-3 6 0s4 3 6 0 4-3 6 0"/></symbol>
+<symbol id="i-hook" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v10a4 4 0 0 0 8 0v-2"/><circle cx="8" cy="3" r="1.3" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-hush" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3.6"/><path d="M9.5 20c0-3 1-5 2.5-5s2.5 2 2.5 5"/><line x1="12" y1="12" x2="16.5" y2="9"/></symbol>
+<symbol id="i-mirror" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="10" rx="7" ry="8"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="9" y1="22" x2="15" y2="22"/></symbol>
+<symbol id="i-burst" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2 14 9 21 8 16 13 20 19 13 16 12 22 11 16 4 19 8 13 3 8 10 9 12 2Z"/></symbol>
+<symbol id="i-rocket" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c3 2 5 6 5 10 0 2-1 4-2 5l-3 3-3-3c-1-1-2-3-2-5 0-4 2-8 5-10Z"/><circle cx="12" cy="10" r="1.6" fill="currentColor" stroke="none"/><path d="M9 16l-3 1 1-3"/><path d="M15 16l3 1-1-3"/></symbol>
+<symbol id="i-crown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18l-1-9-4 4-4-6-4 6-4-4-1 9Z"/><line x1="4" y1="20.5" x2="20" y2="20.5"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="7" y="5" width="4" height="14" rx="1"/><rect x="13" y="5" width="4" height="14" rx="1"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.8L21 9.6l-4.8 4 1.4 6.4L12 16.9 6.4 20l1.4-6.4L3 9.6l6.4-.8L12 3Z"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></symbol>
+<symbol id="i-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="16" y2="15"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-dice" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8" cy="8" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.2" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-microscope" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M11 21v-4"/><path d="M7 17h9a4 4 0 0 0 0-8h-1"/><path d="M9 13 6 10l2-2 5 5"/><line x1="14" y1="3" x2="17" y2="6"/></symbol>
+<symbol id="i-glove" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12V6a2 2 0 1 1 4 0v5"/><path d="M12 11V5a2 2 0 1 1 4 0v6"/><path d="M16 12V7a2 2 0 1 1 4 0v7c0 4-3 7-7 7h-1c-3 0-5-1.5-6.5-4L4 15.5c-.7-1 0-2.3 1.2-2.3.5 0 1 .2 1.3.7L8 16"/></symbol>
+<symbol id="i-briefcase" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="13" x2="21" y2="13"/></symbol>
+<symbol id="i-medal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="15" r="6"/><path d="M9 3h6l-2 8h-2L9 3Z"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="7.5" r="1" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-handshake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h6l3 3 3-3h6"/><circle cx="12" cy="12" r="2"/></symbol>
+<symbol id="i-letters" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19 7 6h2l4 13"/><line x1="4.5" y1="14" x2="10.5" y2="14"/><path d="M14 19v-6a2.5 2.5 0 1 1 5 0v6"/><line x1="14" y1="15" x2="19" y2="15"/></symbol>
+<symbol id="i-mouth" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12c3 4 13 4 16 0"/><path d="M4 12c3-4 13-4 16 0"/><line x1="6.5" y1="12" x2="17.5" y2="12" stroke-dasharray="1 2.6"/></symbol>
+<symbol id="i-palette" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2s-.5-1.5-.5-2.5A2 2 0 0 1 15.5 14H17a4 4 0 0 0 4-4c0-4-4-7-9-7Z"/><circle cx="8" cy="11" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="8" r="1.1" fill="currentColor" stroke="none"/><circle cx="16" cy="10" r="1.1" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4V5Z"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M7 4l13 8-13 8V4Z"/></symbol>
+<symbol id="i-stop" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-3-6.3"/><path d="M20 3v5h-5"/></symbol>
+<symbol id="i-dot" viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="12" r="6"/></symbol>
+<symbol id="i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="18" y2="12"/><path d="M13 6l6 6-6 6"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.2M12 18.8V21M4.9 4.9l1.5 1.5M17.6 17.6l1.5 1.5M3 12h2.2M18.8 12H21M4.9 19.1l1.5-1.5M17.6 6.4l1.5-1.5"/></symbol>
+<symbol id="i-warning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 22 20H2L12 3Z"/><line x1="12" y1="9.5" x2="12" y2="14"/><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="20"/><rect x="6" y="12" width="3" height="8"/><rect x="11" y="7" width="3" height="13"/><rect x="16" y="14" width="3" height="6"/></symbol>
+<symbol id="i-smiley" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10" r="1" fill="currentColor" stroke="none"/><circle cx="15.5" cy="10" r="1" fill="currentColor" stroke="none"/><path d="M7.5 14c1.2 2 3 3 4.5 3s3.3-1 4.5-3"/></symbol>
+<symbol id="i-brain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1.5 5.6A3 3 0 0 0 7 18a3 3 0 0 0 5 1V6a2.5 2.5 0 0 0-3-2Z"/><path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 1.5 5.6A3 3 0 0 1 17 18a3 3 0 0 1-5 1V6a2.5 2.5 0 0 1 3-2Z"/></symbol>
+<symbol id="i-question" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 1 1 3.8 2.3c-.9.5-1.3 1-1.3 2"/><circle cx="12" cy="16.6" r="1" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="5.5" y1="5.5" x2="18.5" y2="18.5"/><line x1="18.5" y1="5.5" x2="5.5" y2="18.5"/></symbol>
+</defs>
+</svg>
+
+<!-- ═══ MENU ═══ -->
+<div id="s-menu" class="screen active" style="justify-content:center;align-items:center;padding:40px 24px">
+  <div style="text-align:center;width:100%;max-width:380px">
+    <div style="font-size:3.5rem;margin-bottom:4px;color:var(--accent)"><svg class="icon"><use href="#i-mic"/></svg></div>
+    <h1 style="background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">SPEAK<br>OR DIE</h1>
+    <div style="margin:8px 0 4px"><span class="pg-badge"><svg class="icon icon-sm"><use href="#i-sparkle"/></svg> Pro golos Academy</span></div>
+    <p style="margin:6px 0 28px;font-size:.82rem">Ролевая игра на развитие речи · от Инги Брик</p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn btn-primary btn-lg btn-full" onclick="goSolo()"><svg class="icon"><use href="#i-gamepad"/></svg> Одиночная игра</button>
+      <button class="btn btn-secondary btn-lg btn-full" onclick="goTournamentSetup()"><svg class="icon"><use href="#i-trophy"/></svg> Турнир (2–8 игроков)</button>
+      <button class="btn btn-secondary btn-lg btn-full" onclick="goPvpSetup()"><svg class="icon"><use href="#i-swords"/></svg> Дуэль (2 игрока)</button>
+      <button class="btn btn-ghost btn-full" onclick="showScreen('s-rules')"><svg class="icon"><use href="#i-book"/></svg> Правила</button>
+    </div>
+    <div id="menu-record" style="margin-top:20px">
+      <div class="card" style="background:rgba(255,215,0,.05);border-color:rgba(255,215,0,.25)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <p class="text-xs text-gold" style="letter-spacing:.5px;text-transform:uppercase">Ваш уровень</p>
+          <span class="badge badge-blue" id="m-wins-badge">0 побед</span>
+        </div>
+        <div class="fw-bold" style="font-size:1.3rem;margin-bottom:2px" id="m-tier">Новичок</div>
+        <div class="text-sm muted mb-8">Рейтинг BRIQ: <b class="text-gold" id="m-exp">0</b></div>
+        <div class="stat-bar" style="margin-bottom:6px"><div class="stat-fill fill-gold" id="m-bar" style="width:0%"></div></div>
+        <div class="text-xs muted" id="m-next">До уровня «Ученик» осталось 250 баллов</div>
+      </div>
+    </div>
+    <p class="text-xs muted" style="margin-top:12px" id="cap-note">Нужен микрофон · Chrome · Edge · Safari · Android</p>
+    <a href="https://progolos.ru.com" target="_blank" style="display:block;margin-top:14px;padding:12px 16px;background:rgba(136,85,204,.12);border-radius:12px;border:1px solid rgba(180,120,255,.2);text-decoration:none">
+      <div style="font-size:.72rem;color:#c48eff;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:5px"><svg class="icon icon-sm"><use href="#i-cap"/></svg> О проекте</div>
+      <div style="font-size:.78rem;color:var(--text);font-weight:700;margin-bottom:2px">Академия Инги Брик</div>
+      <div style="font-size:.78rem;color:var(--muted);line-height:1.4">Методика федерального диктора, педагога по речевому искусству, автора речевых методик и актрисы дубляжа Инги Брик</div>
+      <div style="font-size:.72rem;color:#c48eff;margin-top:6px;display:flex;align-items:center;gap:4px">progolos.ru.com <svg class="icon icon-sm"><use href="#i-arrow-right"/></svg></div>
+    </a>
+    <button class="btn btn-ghost btn-sm btn-full" style="margin-top:10px" onclick="showScreen('s-support')"><svg class="icon"><use href="#i-chat"/></svg> Служба заботы</button>
+  </div>
+</div>
+
+<!-- ═══ RULES ═══ -->
+<div id="s-rules" class="screen">
+  <div class="nav"><button class="back-btn" onclick="showScreen('s-menu')">←</button><h2>Как играть</h2></div>
+  <div style="display:flex;flex-direction:column;gap:10px;max-width:500px">
+    <div class="card"><h3 class="mb-8 reason-row"><svg class="icon icon-accent"><use href="#i-target"/></svg> Цель</h3><p>Развивайте речевое мастерство, коммуникацию и ораторское искусство. Учитесь уверенно выступать перед аудиторией, говорить убедительно, структурно и без страха публичных выступлений. Повышайте качество речи через игровые задания, соревнования и персональную обратную связь.</p></div>
+    <div class="card">
+      <h3 class="mb-8 reason-row"><svg class="icon icon-accent"><use href="#i-chart"/></svg> Что анализируется</h3>
+      <div class="text-xs muted" style="text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Базовый анализ</div>
+      <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px">
+        <div style="display:flex;gap:8px"><span class="icon-muted"><svg class="icon"><use href="#i-bug"/></svg></span><p class="text-sm"><b>Паразиты</b> — слова и звуки-паразиты: «ну», «эм», «как бы»... Каждое снижает харизму</p></div>
+        <div style="display:flex;gap:8px"><span class="icon-gold"><svg class="icon"><use href="#i-bolt"/></svg></span><p class="text-sm"><b>Темп речи</b> — оптимум 100–160 слов/мин</p></div>
+        <div style="display:flex;gap:8px"><span class="icon-muted"><svg class="icon"><use href="#i-timer"/></svg></span><p class="text-sm"><b>Продолжительность</b> — использовал 70%+ времени — бонус</p></div>
+        <div style="display:flex;gap:8px"><span class="icon-muted"><svg class="icon"><use href="#i-speaker"/></svg></span><p class="text-sm"><b>Громкость</b> — слишком тихая или слишком громкая речь хуже</p></div>
+      </div>
+      <div class="text-xs muted" style="text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Продвинутый анализ · Интонация</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="display:flex;gap:8px"><span class="icon-muted"><svg class="icon"><use href="#i-music"/></svg></span><p class="text-sm"><b>Динамика голоса</b> — монотонность, эмоциональная выразительность и вариативность интонации штрафуются или поощряются вместе</p></div>
+      </div>
+    </div>
+    <div class="card"><h3 class="mb-8 reason-row"><svg class="icon icon-gold"><use href="#i-trophy"/></svg> Турнир</h3><p>2–8 игроков по очереди выступают на одну тему. В конце — общий рейтинг с победителем.</p></div>
+    <div class="card"><h3 class="mb-8 reason-row"><svg class="icon icon-muted"><use href="#i-gear"/></svg> Техническое</h3><p>Работает на Windows, Android и iPhone (Chrome, Edge, Safari). Нужен микрофон — при первом запуске дай разрешение на запись. Полное распознавание речи (подсчёт слов и паразитов) доступно в Chrome, Edge и Android; на iPhone/Safari оценка идёт по голосу.</p></div>
+  </div>
+</div>
+
+<!-- ═══ SUPPORT / СЛУЖБА ЗАБОТЫ ═══ -->
+<div id="s-support" class="screen">
+  <div class="nav"><button class="back-btn" onclick="showScreen('s-menu')">←</button><h2 class="reason-row"><svg class="icon"><use href="#i-chat"/></svg> Служба заботы</h2></div>
+  <div style="display:flex;flex-direction:column;gap:10px;max-width:500px">
+    <div class="card">
+      <h3 class="mb-8">Частые вопросы</h3>
+      <details style="margin-bottom:10px"><summary class="text-sm fw-bold" style="cursor:pointer">Не работает микрофон — что делать?</summary><p class="text-sm mt-8">Открой игру в обычном браузере (Chrome, Edge, Safari), не во встроенном окне Telegram/Instagram — они блокируют доступ к микрофону. При первом запуске разреши доступ во всплывающем окне.</p></details>
+      <details style="margin-bottom:10px"><summary class="text-sm fw-bold" style="cursor:pointer">Почему на iPhone не считаются слова и паразиты?</summary><p class="text-sm mt-8">Safari на iOS не поддерживает распознавание речи в браузере. На iPhone/iPad игра оценивает голос — громкость, динамику, темп и длительность, без подсчёта конкретных слов.</p></details>
+      <details style="margin-bottom:10px"><summary class="text-sm fw-bold" style="cursor:pointer">Игра бесплатная?</summary><p class="text-sm mt-8">Да, тренажёр бесплатный. Это демо-инструмент от академии Pro golos — полное обучение речи с обратной связью проходит внутри академии.</p></details>
+      <details><summary class="text-sm fw-bold" style="cursor:pointer">Как связаться с Ингой Брик?</summary><p class="text-sm mt-8">Кнопками ниже — личный Telegram или сообщество академии.</p></details>
+    </div>
+    <div class="card">
+      <h3 class="mb-8">Связаться с нами</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="https://t.me/Inga_Brik" target="_blank" class="btn btn-secondary btn-full"><svg class="icon"><use href="#i-chat"/></svg> Написать в Telegram</a>
+        <a href="https://t.me/+dazVAx9-BvViZmNi" target="_blank" class="btn btn-secondary btn-full"><svg class="icon"><use href="#i-sparkle"/></svg> Сообщество Pro golos</a>
+        <a href="https://progolos.ru.com" target="_blank" class="btn btn-ghost btn-full"><svg class="icon"><use href="#i-cap"/></svg> Официальный сайт · оферта</a>
+      </div>
+      <p class="text-xs muted mt-12">Отдельная линия поддержки (менеджер · форма обратной связи) появится здесь дополнительно — пока действуют контакты выше.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SOLO PROFILE ═══ -->
+<div id="s-profile" class="screen">
+  <div class="nav"><button class="back-btn" onclick="showScreen('s-menu')">←</button><h2>Выбери архетип</h2></div>
+  <p class="text-sm muted mb-12">Влияет на механику, но не на оценку</p>
+  <div class="profiles-grid" id="profiles-grid"></div>
+  <button class="btn btn-primary btn-full btn-lg" id="start-solo-btn" onclick="startSolo()" disabled>Начать игру</button>
+  <div class="card" style="margin-top:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <h3 class="reason-row"><svg class="icon icon-gold"><use href="#i-trophy"/></svg> Навыки</h3>
+      <span class="badge badge-gold" id="skill-pts-badge">0 очков</span>
+    </div>
+    <div class="skills-grid" id="skills-grid"></div>
+  </div>
+</div>
+
+<!-- ═══ SOLO GAME ═══ -->
+<div id="s-game" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0 6px">
+    <button class="back-btn" onclick="confirmQuit()">←</button>
+    <div id="level-display" class="level-badge reason-row"><svg class="icon icon-sm icon-gold"><use href="#i-star"/></svg> Уровень 1</div>
+    <div class="text-sm fw-bold" id="exp-display">XP: 0</div>
+  </div>
+  <div style="display:flex;gap:10px;margin-bottom:10px">
+    <div style="flex:1"><div class="stat-label"><span class="text-xs reason-row"><svg class="icon icon-sm icon-accent"><use href="#i-flame"/></svg> Харизма</span><span class="text-xs fw-bold" id="c-val">50</span></div><div class="stat-bar"><div class="stat-fill fill-red" id="c-bar" style="width:50%"></div></div></div>
+    <div style="flex:1"><div class="stat-label"><span class="text-xs reason-row"><svg class="icon icon-sm icon-gold"><use href="#i-heart"/></svg> Доверие</span><span class="text-xs fw-bold" id="t-val">50</span></div><div class="stat-bar"><div class="stat-fill fill-gold" id="t-bar" style="width:50%"></div></div></div>
+    <div style="flex:1"><div class="stat-label"><span class="text-xs reason-row"><svg class="icon icon-sm icon-green"><use href="#i-bolt"/></svg> Энергия</span><span class="text-xs fw-bold" id="e-val">100</span></div><div class="stat-bar"><div class="stat-fill fill-green" id="e-bar" style="width:100%"></div></div></div>
+  </div>
+  <div id="active-profile-chip"></div>
+  <div id="task-area"></div>
+  <div class="viz-wrap">
+    <canvas id="viz-canvas" style="height:68px"></canvas>
+    <div class="viz-label" id="viz-label">микрофон</div>
+  </div>
+  <div class="pitch-display">
+    <div class="pitch-item"><div class="pitch-val" id="g-tempo">—</div><div class="pitch-lbl">сл/мин</div></div>
+    <div class="pitch-item"><div class="pitch-val" id="g-volume">—</div><div class="pitch-lbl">громкость</div></div>
+    <div class="pitch-item"><div class="pitch-val" id="g-variety">—</div><div class="pitch-lbl">динамика</div></div>
+  </div>
+  <div class="transcript-box mb-8" id="g-transcript"><span class="muted text-sm">Здесь появится твоя речь...</span></div>
+  <div class="center" style="margin:6px 0">
+    <div class="timer" id="g-timer">60</div>
+    <div class="text-xs muted mt-8" id="g-hint">Нажми микрофон чтобы начать</div>
+  </div>
+  <div style="display:flex;justify-content:center;margin:10px 0 6px">
+    <button class="mic-btn stopped" id="g-mic" onclick="toggleGRec()"><svg class="icon"><use href="#i-mic"/></svg></button>
+  </div>
+  <div class="playback-bar hidden" id="g-playback">
+    <button class="play-btn" id="g-play-btn" onclick="gPlayback()"><svg class="icon"><use href="#i-play"/></svg></button>
+    <div class="playback-info"><div class="text-sm fw-bold">Послушать себя</div><div class="playback-label">нажми чтобы воспроизвести</div></div>
+  </div>
+  <div class="hidden" id="g-result"></div>
+</div>
+
+<!-- ═══ PVP SETUP ═══ -->
+<div id="s-pvp-setup" class="screen">
+  <div class="nav"><button class="back-btn" onclick="showScreen('s-menu')">←</button><h2 class="reason-row"><svg class="icon"><use href="#i-swords"/></svg> Дуэль</h2></div>
+  <p class="muted text-sm mb-16">Два игрока, одна тема. По очереди — побеждает сильнейший.</p>
+  <div class="pvp-halves">
+    <div class="pvp-player"><div style="font-size:1.4rem;margin-bottom:7px;color:var(--muted)"><svg class="icon"><use href="#i-user"/></svg></div>
+      <input id="pvp-n1" placeholder="Игрок 1" maxlength="12" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-size:.95rem;width:100%;text-align:center">
+    </div>
+    <div class="pvp-vs">VS</div>
+    <div class="pvp-player"><div style="font-size:1.4rem;margin-bottom:7px;color:var(--muted)"><svg class="icon"><use href="#i-user"/></svg></div>
+      <input id="pvp-n2" placeholder="Игрок 2" maxlength="12" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-size:.95rem;width:100%;text-align:center">
+    </div>
+  </div>
+  <h3 class="mb-8">Тема дуэли</h3>
+  <div class="task-card mb-8">
+    <div class="task-title reason-row" style="justify-content:center"><svg class="icon icon-sm"><use href="#i-clipboard"/></svg> Тема</div>
+    <div class="task-text" id="pvp-topic-text">...</div>
+    <div class="task-time reason-row" style="justify-content:center"><svg class="icon icon-sm"><use href="#i-timer"/></svg> 60 секунд на каждого</div>
+  </div>
+  <button class="btn btn-secondary btn-sm mb-16" onclick="rotatePvpTopic()"><svg class="icon"><use href="#i-dice"/></svg> Другая тема</button>
+  <button class="btn btn-primary btn-lg btn-full" onclick="startPvp()"><svg class="icon"><use href="#i-swords"/></svg> Начать дуэль</button>
+</div>
+
+<!-- ═══ PVP GAME ═══ -->
+<div id="s-pvp-game" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0 6px">
+    <button class="back-btn" onclick="stopPvpRec();showScreen('s-pvp-setup')">←</button>
+    <div id="pvp-round-badge" class="level-badge reason-row"><svg class="icon icon-sm"><use href="#i-swords"/></svg> Раунд 1 / 2</div>
+    <div></div>
+  </div>
+  <div class="pvp-halves">
+    <div class="pvp-player" id="pvp-p1-g"><div class="text-sm fw-bold" id="pvp-n1-g">P1</div><div class="text-xs muted" id="pvp-s1-g">ждёт</div><div class="text-gold fw-bold mt-8" id="pvp-sc1-g">—</div></div>
+    <div class="pvp-vs">VS</div>
+    <div class="pvp-player" id="pvp-p2-g"><div class="text-sm fw-bold" id="pvp-n2-g">P2</div><div class="text-xs muted" id="pvp-s2-g">ждёт</div><div class="text-gold fw-bold mt-8" id="pvp-sc2-g">—</div></div>
+  </div>
+  <div id="pvp-task-disp" class="task-card mb-8"></div>
+  <div class="viz-wrap">
+    <canvas id="pvp-canvas" style="height:60px"></canvas>
+    <div class="viz-label" id="pvp-viz-label">микрофон</div>
+  </div>
+  <div class="pitch-display">
+    <div class="pitch-item"><div class="pitch-val" id="pvp-tempo">—</div><div class="pitch-lbl">сл/мин</div></div>
+    <div class="pitch-item"><div class="pitch-val" id="pvp-volume">—</div><div class="pitch-lbl">громкость</div></div>
+    <div class="pitch-item"><div class="pitch-val" id="pvp-variety">—</div><div class="pitch-lbl">динамика</div></div>
+  </div>
+  <div class="transcript-box mb-8" id="pvp-transcript"><span class="muted text-sm">Здесь появится речь...</span></div>
+  <div class="center" style="margin:6px 0">
+    <div class="timer" id="pvp-timer">60</div>
+    <div class="text-xs muted mt-8" id="pvp-hint">Нажми микрофон</div>
+  </div>
+  <div style="display:flex;justify-content:center;margin:10px 0 6px">
+    <button class="mic-btn stopped" id="pvp-mic" onclick="togglePvpRec()"><svg class="icon"><use href="#i-mic"/></svg></button>
+  </div>
+  <div class="playback-bar hidden" id="pvp-playback">
+    <button class="play-btn" id="pvp-play-btn" onclick="pvpPlayback()"><svg class="icon"><use href="#i-play"/></svg></button>
+    <div class="playback-info"><div class="text-sm fw-bold" id="pvp-pb-name">Послушать</div><div class="playback-label">нажми чтобы воспроизвести</div></div>
+  </div>
+  <div class="hidden" id="pvp-speech-result"></div>
+</div>
+
+<!-- ═══ PVP RESULTS ═══ -->
+<div id="s-pvp-results" class="screen">
+  <div class="nav"><button class="back-btn" onclick="showScreen('s-menu')">←</button><h2 class="reason-row"><svg class="icon"><use href="#i-swords"/></svg> Итоги дуэли</h2></div>
+  <div id="pvp-final"></div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px">
+    <button class="btn btn-primary btn-full btn-lg" onclick="goPvpSetup()"><svg class="icon"><use href="#i-refresh"/></svg> Ещё раунд</button>
+    <button class="btn btn-secondary btn-full" onclick="showScreen('s-menu')">В меню</button>
+  </div>
+  <div style="text-align:center;padding:20px 0 8px"><span class="pg-badge"><svg class="icon icon-sm"><use href="#i-sparkle"/></svg> Pro golos Academy</span></div>
+</div>
+
+<!-- ═══ TOURNAMENT SETUP ═══ -->
+<div id="s-tournament-setup" class="screen">
+  <div class="nav"><button class="back-btn" onclick="showScreen('s-menu')">←</button><h2 class="reason-row"><svg class="icon icon-gold"><use href="#i-trophy"/></svg> Турнир</h2></div>
+  <p class="muted text-sm mb-16">Добавь участников — каждый выступит по очереди на одну тему.</p>
+
+  <h3 class="mb-8">Участники</h3>
+  <div id="tn-players-list"></div>
+  <button class="btn btn-secondary btn-sm mb-16" id="tn-add-btn" onclick="addTnPlayer()">+ Добавить участника</button>
+
+  <h3 class="mb-8">Тема</h3>
+  <div class="task-card" style="margin-bottom:8px">
+    <div class="task-title reason-row" style="justify-content:center"><svg class="icon icon-sm"><use href="#i-clipboard"/></svg> Тема для всех</div>
+    <div class="task-text" id="tn-topic-text">...</div>
+  </div>
+  <button class="btn btn-secondary btn-sm mb-16" onclick="rotateTnTopic()"><svg class="icon"><use href="#i-dice"/></svg> Другая тема</button>
+
+  <h3 class="mb-8">Время на выступление</h3>
+  <div class="tn-time-selector">
+    <div class="tn-time-btn selected" data-t="30" onclick="selectTnTime(30,this)">30 сек</div>
+    <div class="tn-time-btn" data-t="60" onclick="selectTnTime(60,this)">60 сек</div>
+    <div class="tn-time-btn" data-t="90" onclick="selectTnTime(90,this)">90 сек</div>
+  </div>
+
+  <button class="btn btn-primary btn-lg btn-full" onclick="startTournament()"><svg class="icon"><use href="#i-trophy"/></svg> Начать турнир</button>
+</div>
+
+<!-- ═══ TOURNAMENT GAME ═══ -->
+<div id="s-tournament-game" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0 4px">
+    <button class="back-btn" onclick="stopTnRec();showScreen('s-tournament-setup')">←</button>
+    <div id="tn-round-badge" class="level-badge reason-row"><svg class="icon icon-sm icon-gold"><use href="#i-trophy"/></svg> Игрок 1 / 4</div>
+    <div></div>
+  </div>
+
+  <!-- Player pills progress -->
+  <div class="tn-pills" id="tn-pills"></div>
+
+  <!-- Current player -->
+  <div style="text-align:center;margin:8px 0 4px">
+    <div style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Сейчас говорит</div>
+    <div style="font-size:1.6rem;font-weight:900;margin-top:3px" id="tn-current-name">Игрок</div>
+  </div>
+
+  <!-- Topic -->
+  <div class="task-card" style="margin:6px 0 10px">
+    <div class="task-title reason-row" style="justify-content:center"><svg class="icon icon-sm"><use href="#i-clipboard"/></svg> Тема</div>
+    <div class="task-text" id="tn-topic-disp">...</div>
+    <div class="task-time reason-row" style="justify-content:center" id="tn-time-hint"><svg class="icon icon-sm"><use href="#i-timer"/></svg> 60 секунд</div>
+  </div>
+
+  <!-- Viz -->
+  <div class="viz-wrap">
+    <canvas id="tn-canvas" style="height:60px"></canvas>
+    <div class="viz-label" id="tn-viz-label">микрофон</div>
+  </div>
+
+  <!-- Metrics -->
+  <div class="pitch-display">
+    <div class="pitch-item"><div class="pitch-val" id="tn-tempo">—</div><div class="pitch-lbl">сл/мин</div></div>
+    <div class="pitch-item"><div class="pitch-val" id="tn-volume">—</div><div class="pitch-lbl">громкость</div></div>
+    <div class="pitch-item"><div class="pitch-val" id="tn-variety">—</div><div class="pitch-lbl">динамика</div></div>
+  </div>
+
+  <!-- Transcript -->
+  <div class="transcript-box mb-8" id="tn-transcript"><span class="muted text-sm">Здесь появится речь...</span></div>
+
+  <!-- Timer -->
+  <div class="center" style="margin:6px 0">
+    <div class="timer" id="tn-timer">60</div>
+    <div class="text-xs muted mt-8" id="tn-hint">Нажми микрофон чтобы начать</div>
+  </div>
+
+  <!-- Mic -->
+  <div style="display:flex;justify-content:center;margin:10px 0 6px">
+    <button class="mic-btn stopped" id="tn-mic" onclick="toggleTnRec()"><svg class="icon"><use href="#i-mic"/></svg></button>
+  </div>
+
+  <!-- Playback -->
+  <div class="playback-bar hidden" id="tn-playback">
+    <button class="play-btn" id="tn-play-btn" onclick="tnPlayback()"><svg class="icon"><use href="#i-play"/></svg></button>
+    <div class="playback-info"><div class="text-sm fw-bold" id="tn-pb-name">Послушать</div><div class="playback-label">нажми чтобы воспроизвести</div></div>
+  </div>
+
+  <!-- Round result -->
+  <div class="hidden" id="tn-result"></div>
+</div>
+
+<!-- ═══ TOURNAMENT RESULTS ═══ -->
+<div id="s-tournament-results" class="screen">
+  <div class="nav"><button class="back-btn" onclick="showScreen('s-menu')">←</button><h2 class="reason-row"><svg class="icon icon-gold"><use href="#i-trophy"/></svg> Итоги турнира</h2></div>
+  <div id="tn-final"></div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px">
+    <button class="btn btn-primary btn-full btn-lg" onclick="goTournamentSetup()"><svg class="icon"><use href="#i-refresh"/></svg> Новый турнир</button>
+    <button class="btn btn-secondary btn-full" onclick="showScreen('s-menu')">В меню</button>
+  </div>
+  <div style="text-align:center;padding:20px 0 8px"><span class="pg-badge"><svg class="icon icon-sm"><use href="#i-sparkle"/></svg> Pro golos Academy</span></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// ICON HELPER — inline SVG <use> ref, replaces emoji in generated markup
+// ═══════════════════════════════════════════
+function ic(name,cls){return '<svg class="icon'+(cls?' '+cls:'')+'"><use href="#i-'+name+'"/></svg>';}
+
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+
+const PROFILES=[
+  {id:'authority',emoji:'crown',name:'Авторитет',rule:'Говори уверенно и по делу — как лидер',bonus:'Лидерство · Переговоры',color:'#ffd700'},
+  {id:'story',emoji:'book',name:'Рассказчик',rule:'Каждый аргумент — через историю',bonus:'Образность · Сторителлинг',color:'#0099cc'},
+  {id:'prov',emoji:'mask',name:'Провокатор',rule:'Задевай, интригуй, вызывай реакцию',bonus:'Влияние · Харизма',color:'#dd4400'},
+  {id:'pro',emoji:'mic',name:'Профессионал',rule:'Говори как эксперт на конференции',bonus:'Презентации · Экспертность',color:'#00b4d8'},
+  {id:'comedian',emoji:'smiley',name:'Юморист',rule:'Вставляй юмор и лёгкость',bonus:'Чувство юмора · Подача',color:'#ffaa00'},
+  {id:'improv',emoji:'bolt',name:'Импровизатор',rule:'Вплети 3 случайных слова в рассказ',bonus:'Импровизация · Гибкость',color:'#ff6622'},
+  {id:'memory',emoji:'brain',name:'Мастер памяти',rule:'Пересказывай без потери деталей',bonus:'Память · Пересказ',color:'#8855cc'},
+  {id:'random',emoji:'question',name:'Случайный вызов',rule:'Система сама выберет тебе режим',bonus:'???',color:'#00aaaa'},
+];
+
+const IMPROV_WORDS=['лестница','дедлайн','апельсин','зеркало','ракета','дождь','клавиатура','маяк','магнит','пингвин','фонарь','ключ','остров','велосипед','снежинка','карта','телескоп','якорь','пружина','компас'];
+
+function pickImprovWords(){
+  const pool=[...IMPROV_WORDS];
+  const picked=[];
+  for(let i=0;i<3&&pool.length;i++){picked.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);}
+  return picked;
+}
+
+const SKILLS=[
+  {id:'strong-start',name:'Мощный старт',emoji:'rocket',cost:1,effect:'+15 доверия за первые 10с'},
+  {id:'story30',name:'История за 30с',emoji:'book',cost:1,effect:'+10 харизмы за связный рассказ'},
+  {id:'hook',name:'Эмоц. крючок',emoji:'hook',cost:2,effect:'Провокации дают x2 доверия'},
+  {id:'leader-voice',name:'Голос лидера',emoji:'crown',cost:2,effect:'-50% штраф за паразиты'},
+  {id:'pause',name:'Пауза — сила',emoji:'pause',cost:1,effect:'Паузы не считаются слабостью'},
+  {id:'strong-end',name:'Сильный финал',emoji:'burst',cost:1,effect:'+20 харизмы за сильную концовку'},
+];
+
+const LEVELS=[
+  {id:0,title:'Уровень 1',task:'Убеди жителей города построить новый мост.',time:60,min:25},
+  {id:1,title:'Уровень 2',task:'Представь новый проект команде. Объясни идею и почему это сработает.',time:60,min:30},
+  {id:2,title:'Уровень 3',task:'Незнакомец говорит, что твоя идея плохая. Защити её за 60 секунд.',time:60,min:25},
+  {id:3,title:'Уровень 4',task:'Стартап-питч: у тебя 60 секунд. Расскажи о проекте так, чтобы инвестор вложился.',time:60,min:35},
+  {id:4,title:'Уровень 5',task:'Команда устала и хочет бросить проект. Вдохнови их продолжить.',time:60,min:30},
+  {id:5,title:'БОСС: Журналист',task:'Журналист задаёт острые вопросы о твоём провальном решении. Отстой позицию.',time:90,min:45,boss:true,bossName:'Журналист-скептик'},
+  {id:6,title:'Уровень 7',task:'Партнёр хочет разорвать сделку. У тебя 60 секунд чтобы сохранить отношения.',time:60,min:30},
+  {id:7,title:'Уровень 8',task:'Выступаешь перед 500 людьми. Расскажи о проблеме которую хочешь решить.',time:60,min:35},
+  {id:8,title:'БОСС: Инвестор',task:'Инвестор нападает на каждый слабый аргумент. Выдержи давление и убеди его.',time:90,min:50,boss:true,bossName:'Инвестор-акула'},
+];
+
+const PROVOCATIONS=[
+  '«Это слишком дорого!»',
+  '«Вы уверены в данных?»',
+  '«Уже пробовали — не сработало.»',
+  '«Конкуренты делают это лучше.»',
+  '«Докажите что это реально нужно.»',
+  '«Звучит как очередная идея из интернета.»',
+  '«Рынок ещё не готов.»',
+  '«Почему именно вы?»',
+];
+
+const PARASITES=['ну','вот','эм','как бы','типа','это самое','короче','блин','собственно','в общем','значит','просто','буквально','реально','ладно'];
+
+const ALL_TOPICS=[
+  'Почему коты лучше собак?',
+  'Удалённая работа лучше офиса',
+  'Чай лучше кофе',
+  'Провалы обучают лучше побед',
+  'Интроверты лучше управляют командой',
+  'Скука — источник великих идей',
+  'Нужно читать бумажные книги',
+  'Деньги не решают главных проблем',
+  'Утро продуктивнее вечера',
+  'Маленькие команды бьют корпорации',
+  'Медленнее значит качественнее',
+  'Честность важнее дипломатии',
+  'Лучший отдых — активный',
+  'Критика полезнее похвалы',
+  'Технологии делают нас умнее',
+];
+
+const ORATOR_TYPES=[
+  {type:'Вдохновитель',emoji:'sparkle',desc:'Зажигаешь эмоцией и энергией',check:r=>r.variety>60&&r.parasites<3},
+  {type:'Аналитик',emoji:'microscope',desc:'Говоришь чётко и по делу',check:r=>r.tempo>=100&&r.tempo<=150&&r.parasites<2},
+  {type:'Боец',emoji:'glove',desc:'Держишь удар и не теряешься',check:r=>r.parasites===0},
+  {type:'Рассказчик',emoji:'wave',desc:'Создаёшь образы и истории',check:r=>r.words>60},
+  {type:'Мастер паузы',emoji:'target',desc:'Говоришь взвешенно и уверенно',check:r=>r.tempo<100&&r.tempo>50},
+  {type:'Экспрессив',emoji:'flame',desc:'Быстро, ярко, напористо',check:r=>r.tempo>160},
+  {type:'Практик',emoji:'briefcase',desc:'Стабильный и предсказуемый результат',check:()=>true},
+];
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+
+const G={
+  profile:null,activeProfileId:null,improvWords:[],currentLevel:0,playerLevel:1,exp:0,wins:0,skillPoints:0,skills:{},
+  charisma:50,trust:50,energy:100,
+  recording:false,transcript:'',wordCount:0,startTime:0,
+  timerInt:null,provTimer:null,animFrame:null,
+  audioCtx:null,analyser:null,micStream:null,
+  mediaRec:null,audioChunks:[],audioUrl:null,
+  pitchSamples:[],volSamples:[],
+  provActive:false,provCount:0,provSuccess:0,
+  speechDone:false,
+};
+
+const P={
+  name1:'Игрок 1',name2:'Игрок 2',topic:'',phase:0,results:[null,null],
+  recording:false,transcript:'',wordCount:0,startTime:0,
+  timerInt:null,animFrame:null,
+  audioCtx:null,analyser:null,micStream:null,
+  mediaRec:null,audioChunks:[],audioUrl:null,
+  pitchSamples:[],volSamples:[],
+};
+
+const T={
+  players:[],topic:'',timePerPlayer:30,
+  currentIdx:0,results:[],
+  recording:false,transcript:'',wordCount:0,startTime:0,
+  timerInt:null,animFrame:null,
+  audioCtx:null,analyser:null,micStream:null,
+  mediaRec:null,audioChunks:[],audioUrl:null,
+  pitchSamples:[],volSamples:[],
+  speechDone:false,
+};
+
+let pvpTopicIdx=0;
+let tnTopicIdx=0;
+
+// ═══════════════════════════════════════════
+// PLATFORM / CAPABILITY DETECTION (cross-platform: Win/Android/iOS)
+// ═══════════════════════════════════════════
+const IS_IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+const IS_ANDROID = /Android/.test(navigator.userAgent);
+const GUM_OK = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+// Web Speech API exists on iOS but is unreliable and contends with the getUserMedia
+// mic stream (kills the waveform). Disable it on iOS → fall back to voice-metric scoring.
+const SR_OK = !!(window.SpeechRecognition||window.webkitSpeechRecognition) && !IS_IOS;
+
+// Pick a recording container Safari/iOS can actually play (webm is unsupported on iOS)
+function pickAudioMime(){
+  if(typeof MediaRecorder==='undefined'||!MediaRecorder.isTypeSupported)return '';
+  const c=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/aac','audio/mpeg','audio/ogg;codecs=opus','audio/ogg'];
+  for(const t of c){try{if(MediaRecorder.isTypeSupported(t))return t;}catch(e){}}
+  return '';
+}
+const REC_MIME = pickAudioMime();
+
+// Count filler words WITHOUT regex lookbehind (Safari <16.4 throws on lookbehind)
+function countParasites(text){
+  if(!text)return 0;
+  const lo=text.toLowerCase();
+  let n=0;
+  PARASITES.forEach(p=>{
+    const esc=p.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    try{
+      const re=new RegExp('(^|[^а-яёa-z])'+esc+'(?![а-яёa-z])','gi');
+      let m;while((m=re.exec(lo))!==null){n++;if(m.index===re.lastIndex)re.lastIndex++;}
+    }catch(e){}
+  });
+  return n;
+}
+
+// ═══════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  if(el){el.classList.add('active');el.scrollTop=0;}
+}
+
+function toast(msg){
+  const t=document.createElement('div');
+  t.className='toast';t.innerHTML=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2700);
+}
+
+function goSolo(){showScreen('s-profile');renderProfileScreen();}
+function goPvpSetup(){showScreen('s-pvp-setup');document.getElementById('pvp-topic-text').textContent=ALL_TOPICS[pvpTopicIdx];}
+function confirmQuit(){stopGRec();clearGameTimers();showScreen('s-menu');updateMenuRecord();}
+
+// ═══════════════════════════════════════════
+// TOURNAMENT SETUP
+// ═══════════════════════════════════════════
+
+function goTournamentSetup(){
+  T.players=['',''].map((_,i)=>({name:''}));
+  T.results=[];tnTopicIdx=0;T.timePerPlayer=30;
+  showScreen('s-tournament-setup');
+  renderTnSetup();
+  document.getElementById('tn-topic-text').textContent=ALL_TOPICS[tnTopicIdx];
+}
+
+function renderTnSetup(){
+  const list=document.getElementById('tn-players-list');
+  list.innerHTML=T.players.map((_,i)=>`
+    <div class="tn-player-row">
+      <div class="tn-player-num">${i+1}</div>
+      <input class="tn-player-input" id="tn-p${i}" placeholder="Имя игрока ${i+1}" maxlength="16" value="${T.players[i].name||''}">
+      ${T.players.length>2?`<button class="tn-remove-btn" onclick="removeTnPlayer(${i})">✕</button>`:''}
+    </div>`).join('');
+  const addBtn=document.getElementById('tn-add-btn');
+  if(addBtn)addBtn.style.display=T.players.length>=8?'none':'';
+}
+
+function addTnPlayer(){
+  if(T.players.length>=8)return;
+  T.players.push({name:''});
+  renderTnSetup();
+}
+
+function removeTnPlayer(i){
+  if(T.players.length<=2)return;
+  T.players.splice(i,1);
+  renderTnSetup();
+}
+
+function rotateTnTopic(){
+  tnTopicIdx=(tnTopicIdx+1)%ALL_TOPICS.length;
+  document.getElementById('tn-topic-text').textContent=ALL_TOPICS[tnTopicIdx];
+}
+
+function selectTnTime(val,el){
+  T.timePerPlayer=val;
+  document.querySelectorAll('.tn-time-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function startTournament(){
+  T.players=T.players.map((_,i)=>({
+    name:(document.getElementById('tn-p'+i)||{}).value||`Игрок ${i+1}`
+  }));
+  T.topic=ALL_TOPICS[tnTopicIdx];
+  T.currentIdx=0;T.results=[];
+  showScreen('s-tournament-game');
+  loadTnRound();
+}
+
+// ═══════════════════════════════════════════
+// TOURNAMENT GAME
+// ═══════════════════════════════════════════
+
+function loadTnRound(){
+  const p=T.players[T.currentIdx];
+  T.speechDone=false;T.recording=false;T.transcript='';T.wordCount=0;
+  T.audioChunks=[];T.audioUrl=null;T.pitchSamples=[];T.volSamples=[];
+
+  document.getElementById('tn-round-badge').innerHTML=`${ic('trophy','icon-sm icon-gold')} Игрок ${T.currentIdx+1} / ${T.players.length}`;
+  document.getElementById('tn-current-name').textContent=p.name;
+  document.getElementById('tn-topic-disp').textContent=T.topic;
+  document.getElementById('tn-time-hint').innerHTML=`${ic('timer','icon-sm')} ${T.timePerPlayer} секунд · говори убедительно`;
+  document.getElementById('tn-pb-name').textContent=`Послушать — ${p.name}`;
+
+  renderTnPills();
+
+  document.getElementById('tn-timer').textContent=T.timePerPlayer;
+  document.getElementById('tn-timer').className='timer';
+  document.getElementById('tn-mic').className='mic-btn stopped';
+  document.getElementById('tn-mic').innerHTML=ic('mic');
+  document.getElementById('tn-transcript').innerHTML='<span class="muted text-sm">Здесь появится речь...</span>';
+  document.getElementById('tn-hint').textContent='Нажми микрофон чтобы начать';
+  document.getElementById('tn-tempo').textContent='—';
+  document.getElementById('tn-volume').textContent='—';
+  document.getElementById('tn-variety').textContent='—';
+  document.getElementById('tn-playback').className='playback-bar hidden';
+  document.getElementById('tn-result').className='hidden';
+  document.getElementById('tn-result').innerHTML='';
+  document.getElementById('tn-viz-label').textContent='микрофон';
+  clearViz('tn-canvas');
+}
+
+function renderTnPills(){
+  const pills=document.getElementById('tn-pills');
+  pills.innerHTML=T.players.map((p,i)=>{
+    const done=i<T.currentIdx;
+    const active=i===T.currentIdx;
+    const score=T.results[i]?T.results[i].score:'';
+    const cls=active?'tn-pill active':done?'tn-pill done':'tn-pill';
+    const label=done?`${p.name} · ${score}`:p.name;
+    return `<div class="${cls}">${active?ic('mic','icon-sm')+' ':done?ic('check','icon-sm')+' ':''}${label}</div>`;
+  }).join('');
+}
+
+async function toggleTnRec(){
+  if(T.speechDone)return;
+  if(!T.recording)await startTnRec();
+  else{stopTnRec();finishTnSpeech();}
+}
+
+async function startTnRec(){
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    T.micStream=stream;
+    setupTnAudio(stream);
+    setupTnMediaRecorder(stream);
+    setupTnSpeech();
+    T.recording=true;T.startTime=Date.now();
+    document.getElementById('tn-mic').className='mic-btn recording';
+    document.getElementById('tn-mic').innerHTML=ic('stop');
+    document.getElementById('tn-hint').innerHTML=`${T.players[T.currentIdx].name} говорит... ${ic('stop','icon-sm')} — стоп`;
+    document.getElementById('tn-viz-label').innerHTML=`${ic('dot','icon-sm icon-rec')} запись`;
+    startTnCountdown(T.timePerPlayer,()=>{stopTnRec();finishTnSpeech();});
+  }catch(e){toast('Разреши доступ к микрофону');}
+}
+
+function stopTnRec(){
+  T.recording=false;
+  if(T.timerInt){clearInterval(T.timerInt);T.timerInt=null;}
+  if(T.animFrame){cancelAnimationFrame(T.animFrame);T.animFrame=null;}
+  stopTnMic();
+  stopTnSpeech();
+  if(T.mediaRec&&T.mediaRec.state!=='inactive')T.mediaRec.stop();
+  document.getElementById('tn-mic').className='mic-btn stopped';
+  document.getElementById('tn-mic').innerHTML=ic('mic');
+  document.getElementById('tn-viz-label').textContent='микрофон';
+  clearViz('tn-canvas');
+}
+
+function finishTnSpeech(){
+  T.speechDone=true;
+  const elapsed=Math.max(1,(Date.now()-T.startTime)/1000);
+  const words=T.transcript.trim().split(/\s+/).filter(Boolean);
+  const wc=words.length;
+  const tempo=Math.round((wc/elapsed)*60);
+  const parasites=countParasites(T.transcript);
+  const variety=T.pitchSamples.length>5?calcVariety(T.pitchSamples):50;
+  const avgVol=T.volSamples.length>0?T.volSamples.reduce((a,b)=>a+b,0)/T.volSamples.length:0;
+
+  let score=100;
+  if(wc>=20)score+=30;else score+=wc*1.5;
+  if(tempo>=100&&tempo<=160)score+=25;else if(tempo>=80&&tempo<=180)score+=10;
+  score-=parasites*4;
+  score+=Math.round(variety*0.25);
+  if(avgVol>15)score+=10;
+  if(elapsed/T.timePerPlayer>=0.7)score+=20;
+  score=Math.max(0,Math.round(score));
+
+  const oType=ORATOR_TYPES.find(t=>t.check({variety,parasites,tempo,words:wc}))||ORATOR_TYPES[ORATOR_TYPES.length-1];
+  const result={
+    name:T.players[T.currentIdx].name,
+    score,words:wc,tempo,parasites,variety:Math.round(variety),elapsed:Math.round(elapsed),oType
+  };
+  T.results[T.currentIdx]=result;
+
+  const isLast=T.currentIdx>=T.players.length-1;
+  const nextName=isLast?'':T.players[T.currentIdx+1].name;
+
+  document.getElementById('tn-result').innerHTML=`
+    <div class="card card-glow" style="margin-top:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <h3>${result.name}</h3>
+        <div class="badge badge-gold">Счёт: ${score}</div>
+      </div>
+      <div class="result-grid" style="grid-template-columns:1fr 1fr 1fr 1fr">
+        <div class="result-stat"><div class="result-num">${wc}</div><div class="result-label">слов</div></div>
+        <div class="result-stat"><div class="result-num">${tempo}</div><div class="result-label">сл/мин</div></div>
+        <div class="result-stat"><div class="result-num ${parasites===0?'text-green':'text-accent'}">${parasites}</div><div class="result-label">паразитов</div></div>
+        <div class="result-stat"><div class="result-num">${Math.round(variety)}%</div><div class="result-label">динамика</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin:10px 0">
+        <span style="font-size:1.4rem;color:var(--gold)">${ic(oType.emoji)}</span>
+        <div><div class="fw-bold text-sm">${oType.type}</div><div class="text-xs muted">${oType.desc}</div></div>
+      </div>
+      ${isLast
+        ?`<button class="btn btn-gold btn-full" style="margin-top:8px" onclick="showTournamentResults()">${ic('trophy')} Итоги турнира</button>`
+        :`<button class="btn btn-primary btn-full" style="margin-top:8px" onclick="nextTnPlayer()">${ic('arrow-right')} Следующий: ${nextName}</button>`}
+    </div>`;
+  document.getElementById('tn-result').className='';
+  document.getElementById('tn-playback').className='playback-bar';
+  renderTnPills();
+  setTimeout(()=>document.getElementById('tn-result').scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+function nextTnPlayer(){
+  T.currentIdx++;
+  loadTnRound();
+  setTimeout(()=>window.scrollTo({top:0,behavior:'smooth'}),50);
+}
+
+function showTournamentResults(){
+  const sorted=[...T.results].sort((a,b)=>b.score-a.score);
+  const winner=sorted[0];
+  const medals=[ic('medal','medal-gold icon-sm'),ic('medal','medal-silver icon-sm'),ic('medal','medal-bronze icon-sm')];
+
+  const rows=sorted.map((r,i)=>`
+    <div class="tn-rank-row ${i===0?'winner':''}">
+      <div class="tn-rank-num" style="background:${i===0?'var(--gold)':i===1?'#aaa':i===2?'#cd7f32':'var(--bg3)'};color:${i<3?'#000':'var(--muted)'}">
+        ${medals[i]||i+1}
+      </div>
+      <div>
+        <div class="tn-rank-name">${r.name}</div>
+        <div class="tn-rank-details reason-row">${r.words}сл · ${r.tempo}сл/мин · ${r.parasites}пар · ${r.variety}%дин · ${ic(r.oType.emoji,'icon-sm')}${r.oType.type}</div>
+      </div>
+      <div class="tn-rank-score">${r.score}</div>
+    </div>`).join('');
+
+  const gap=sorted.length>1?sorted[0].score-sorted[1].score:0;
+  const comment=gap===0?'Абсолютная ничья — невероятно!':gap<=15?'Очень близкая борьба!':gap<=40?'Уверенная победа!':'Сокрушительная победа!';
+
+  document.getElementById('tn-final').innerHTML=`
+    <div class="type-card" style="margin-bottom:18px">
+      <div class="type-emoji icon-gold">${ic('trophy')}</div>
+      <div class="type-title">${winner.name} побеждает${winner.name.endsWith('а')?'':(winner.name.endsWith('я')||winner.name.endsWith('я'))?'':''}</div>
+      <p class="muted text-sm" style="margin-top:4px">${comment}</p>
+      <div style="font-size:2.2rem;font-weight:900;color:var(--gold);margin-top:8px">${winner.score} очков</div>
+    </div>
+    <h3 style="margin-bottom:10px">Рейтинг участников</h3>
+    ${rows}
+    <div class="card" style="margin-top:14px">
+      <div style="font-size:.72rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Тема была</div>
+      <div class="fw-bold">${T.topic}</div>
+    </div>
+    ${auditBlock(winner?{parasites:winner.parasites,tempo:winner.tempo,variety:parseInt(winner.variety)}:null)}`;
+  showScreen('s-tournament-results');
+}
+
+function tnPlayback(){
+  if(!T.audioUrl)return;
+  const a=new Audio(T.audioUrl);
+  const btn=document.getElementById('tn-play-btn');
+  btn.innerHTML=ic('pause');a.play();
+  a.onended=()=>btn.innerHTML=ic('play');
+}
+
+// ═══════════════════════════════════════════
+// TOURNAMENT AUDIO
+// ═══════════════════════════════════════════
+
+function setupTnAudio(stream){
+  const ctx=new(window.AudioContext||window.webkitAudioContext)();
+  if(ctx.state==='suspended')ctx.resume().catch(()=>{});
+  const analyser=ctx.createAnalyser();
+  analyser.fftSize=256;analyser.smoothingTimeConstant=0.75;
+  ctx.createMediaStreamSource(stream).connect(analyser);
+  T.audioCtx=ctx;T.analyser=analyser;
+  drawTnWaveform(analyser);
+}
+
+function drawTnWaveform(analyser){
+  const canvas=document.getElementById('tn-canvas');
+  if(!canvas||!analyser)return;
+  const ctx=canvas.getContext('2d');
+  const bufLen=analyser.fftSize;
+  const data=new Uint8Array(bufLen);
+  function draw(){
+    T.animFrame=requestAnimationFrame(draw);
+    analyser.getByteTimeDomainData(data);
+    const w=canvas.offsetWidth||300;const h=canvas.offsetHeight||60;
+    canvas.width=w;canvas.height=h;
+    ctx.fillStyle='#16213e';ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle='#2a2a4a';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(0,h/2);ctx.lineTo(w,h/2);ctx.stroke();
+    let sumSq=0;
+    for(let i=0;i<bufLen;i++){const v=(data[i]-128)/128;sumSq+=v*v;}
+    const rms=Math.sqrt(sumSq/bufLen);
+    const volPct=Math.round(rms*100);
+    const volEl=document.getElementById('tn-volume');
+    if(volEl)volEl.textContent=volPct+'%';
+    T.volSamples.push(volPct);if(T.volSamples.length>300)T.volSamples.shift();
+    const intensity=Math.min(1,rms*4);
+    const grad=ctx.createLinearGradient(0,0,w,0);
+    grad.addColorStop(0,`rgba(233,69,96,${.25+intensity*.75})`);
+    grad.addColorStop(.5,`rgba(255,215,0,${.25+intensity*.75})`);
+    grad.addColorStop(1,`rgba(0,255,136,${.25+intensity*.75})`);
+    ctx.lineWidth=2+intensity;ctx.strokeStyle=grad;
+    if(rms>0.05){ctx.shadowBlur=8;ctx.shadowColor='rgba(233,69,96,.4)';}else ctx.shadowBlur=0;
+    ctx.beginPath();
+    const sw=w/bufLen;let x=0;
+    for(let i=0;i<bufLen;i++){const v=data[i]/128;const y=(v*h)/2;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);x+=sw;}
+    ctx.stroke();
+    if(rms>0.02){
+      let zc=0;
+      for(let i=1;i<bufLen;i++){if((data[i-1]<128&&data[i]>=128)||(data[i-1]>=128&&data[i]<128))zc++;}
+      const pp=zc*55;
+      T.pitchSamples.push(pp);if(T.pitchSamples.length>150)T.pitchSamples.shift();
+      const v2=calcVariety(T.pitchSamples);
+      const varEl=document.getElementById('tn-variety');
+      if(varEl)varEl.textContent=v2+'%';
+    }
+  }
+  draw();
+}
+
+function setupTnMediaRecorder(stream){
+  const chunks=[];
+  let mr;
+  try{mr=REC_MIME?new MediaRecorder(stream,{mimeType:REC_MIME}):new MediaRecorder(stream);}
+  catch(e){try{mr=new MediaRecorder(stream);}catch(e2){return;}}
+  mr.ondataavailable=e=>{if(e.data&&e.data.size>0)chunks.push(e.data);};
+  mr.onstop=()=>{
+    const blob=new Blob(chunks,{type:mr.mimeType||REC_MIME||'audio/webm'});
+    T.audioUrl=URL.createObjectURL(blob);
+    document.getElementById('tn-playback').className='playback-bar';
+  };
+  mr.start();
+  T.mediaRec=mr;T.audioChunks=chunks;
+}
+
+function setupTnSpeech(){
+  if(!SR_OK)return;
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  const r=new SR();
+  r.lang='ru-RU';r.continuous=true;r.interimResults=true;
+  let final='';
+  r.onresult=e=>{
+    let interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const t=e.results[i][0].transcript;
+      if(e.results[i].isFinal)final+=t+' ';else interim+=t;
+    }
+    const full=final+interim;
+    const el=document.getElementById('tn-transcript');
+    if(el)el.innerHTML=highlightParasites(full)||'<span class="muted text-sm">Говори...</span>';
+    T.transcript=full;T.wordCount=full.trim().split(/\s+/).filter(Boolean).length;
+    const mins=(Date.now()-T.startTime)/60000;
+    const tempo=mins>0?Math.round(T.wordCount/mins):0;
+    const tempoEl=document.getElementById('tn-tempo');
+    if(tempoEl)tempoEl.textContent=tempo;
+  };
+  r.onerror=e=>{if(e.error!=='no-speech')console.warn(e.error);};
+  r.onend=()=>{if(T.recording)try{r.start();}catch(e){}};
+  try{r.start();}catch(e){}
+  window._tnRecog=r;
+}
+
+function stopTnSpeech(){
+  if(window._tnRecog)try{window._tnRecog.stop();}catch(e){}
+  window._tnRecog=null;
+}
+
+function stopTnMic(){
+  if(T.micStream)T.micStream.getTracks().forEach(t=>t.stop());
+  T.micStream=null;
+  if(T.audioCtx&&T.audioCtx.state!=='closed')T.audioCtx.close().catch(()=>{});
+  T.audioCtx=null;T.analyser=null;
+}
+
+function startTnCountdown(secs,onEnd){
+  let left=secs;
+  const el=document.getElementById('tn-timer');
+  const intId=setInterval(()=>{
+    left--;
+    if(el){el.textContent=left;el.className=left<=10?'timer warning':'timer';}
+    if(left<=0){clearInterval(intId);T.timerInt=null;onEnd();}
+  },1000);
+  T.timerInt=intId;
+}
+
+// ═══════════════════════════════════════════
+// PROFILE SCREEN
+// ═══════════════════════════════════════════
+
+function renderProfileScreen(){
+  document.getElementById('profiles-grid').innerHTML=PROFILES.map(p=>`
+    <div class="profile-card ${G.profile===p.id?'selected':''}" onclick="selectProfile('${p.id}',this)">
+      <div class="profile-emoji" style="color:${p.color}">${ic(p.emoji)}</div>
+      <div class="profile-name">${p.name}</div>
+      <div class="profile-rule">${p.rule}</div>
+      <div class="text-xs mt-8" style="color:${p.color}">Бонус: ${p.bonus}</div>
+    </div>`).join('');
+  renderSkills();
+  document.getElementById('skill-pts-badge').textContent=`${G.skillPoints} очков`;
+  document.getElementById('start-solo-btn').disabled=!G.profile;
+}
+
+function selectProfile(id,el){
+  G.profile=id;
+  document.querySelectorAll('.profile-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('start-solo-btn').disabled=false;
+}
+
+function renderSkills(){
+  document.getElementById('skills-grid').innerHTML=SKILLS.map(s=>{
+    const owned=G.skills[s.id];
+    const canBuy=!owned&&G.skillPoints>=s.cost;
+    return `<div class="skill-item ${owned?'unlocked':canBuy?'can-buy':'locked'}" onclick="${canBuy?`buySkill('${s.id}')`:''}" style="${canBuy?'cursor:pointer':''}">
+      <div class="skill-icon icon-gold">${ic(s.emoji)}</div>
+      <div><div class="skill-name">${s.name}</div><div class="skill-cost reason-row">${owned?ic('check','icon-sm')+' Куплен':`${s.cost} очк.`}</div><div class="skill-effect">${s.effect}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function buySkill(id){
+  const s=SKILLS.find(x=>x.id===id);
+  if(!s||G.skills[id]||G.skillPoints<s.cost)return;
+  G.skillPoints-=s.cost;G.skills[id]=true;
+  renderSkills();
+  document.getElementById('skill-pts-badge').textContent=`${G.skillPoints} очков`;
+  toast(`Навык «${s.name}» куплен!`);
+}
+
+const BRIQ_TIERS=['Новичок','Ученик','Оратор','Мастер речи','Профи','Легенда сцены'];
+
+function updateMenuRecord(){
+  const tierIdx=Math.min(G.playerLevel-1,BRIQ_TIERS.length-1);
+  const isMax=G.playerLevel>=BRIQ_TIERS.length;
+  const nextThreshold=G.playerLevel*250;
+  const prevThreshold=(G.playerLevel-1)*250;
+  const pct=isMax?100:Math.min(100,Math.round(((G.exp-prevThreshold)/(nextThreshold-prevThreshold))*100));
+  document.getElementById('m-tier').textContent=BRIQ_TIERS[tierIdx];
+  document.getElementById('m-exp').textContent=G.exp;
+  document.getElementById('m-wins-badge').textContent=`${G.wins} побед`;
+  document.getElementById('m-bar').style.width=Math.max(0,pct)+'%';
+  document.getElementById('m-next').textContent=isMax
+    ?'Максимальный уровень достигнут'
+    :`До уровня «${BRIQ_TIERS[tierIdx+1]}» осталось ${Math.max(0,nextThreshold-G.exp)} баллов`;
+}
+
+// ═══════════════════════════════════════════
+// SOLO GAME
+// ═══════════════════════════════════════════
+
+function startSolo(){
+  if(!G.profile)return;
+  G.currentLevel=0;
+  G.activeProfileId=G.profile==='random'
+    ?PROFILES.filter(p=>p.id!=='random')[Math.floor(Math.random()*(PROFILES.length-1))].id
+    :G.profile;
+  G.improvWords=G.activeProfileId==='improv'?pickImprovWords():[];
+  // Randomize non-boss level tasks each game session
+  _shuffleLevels();
+  showScreen('s-game');loadLevel(0);
+}
+
+function activeProfileChip(){
+  const p=PROFILES.find(x=>x.id===G.activeProfileId)||PROFILES.find(x=>x.id===G.profile);
+  if(!p)return '';
+  const rule=p.id==='improv'&&G.improvWords.length?`Вплети слова: «${G.improvWords.join('», «')}»`:p.rule;
+  const randomNote=G.profile==='random'?`<span class="text-xs" style="color:var(--muted)"> · выбрано случайно</span>`:'';
+  return `<div class="reason-row" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:10px;gap:8px;align-items:flex-start">
+    <span style="color:${p.color};flex-shrink:0;margin-top:1px">${ic(p.emoji)}</span>
+    <div style="font-size:.8rem;line-height:1.4"><b>${p.name}</b>${randomNote} — ${rule}</div>
+  </div>`;
+}
+
+function _shuffleLevels(){
+  // Shuffle task texts within non-boss levels to avoid always starting with "мост"
+  const extras=[
+    'Убеди инвестора вложить деньги в твою идею — у тебя есть только 60 секунд.',
+    'Объясни незнакомцу, почему он должен стать волонтёром в твоём проекте.',
+    'Расскажи, какую проблему в городе ты бы решил первым — и как.',
+    'Убеди команду остаться в проекте, несмотря на первые неудачи.',
+    'Защити идею перед комиссией, которая настроена скептически.',
+    'Представь себя и своё дело за 60 секунд так, чтобы запомнили.',
+    'Убеди жителей микрорайона поддержать строительство нового парка.',
+    'Расскажи, почему твоя компания достойна выиграть этот тендер.',
+  ];
+  // Inject one random extra task into level 0 each session
+  const pick=extras[Math.floor(Math.random()*extras.length)];
+  LEVELS[0]={...LEVELS[0],task:pick};
+}
+
+function loadLevel(idx){
+  const lvl=LEVELS[idx]||LEVELS[LEVELS.length-1];
+  G.speechDone=false;G.transcript='';G.wordCount=0;
+  G.audioChunks=[];G.audioUrl=null;G.pitchSamples=[];G.volSamples=[];
+  G.provActive=false;G.provCount=0;G.provSuccess=0;G.currentLevel=idx;
+  document.getElementById('level-display').innerHTML=`${ic('star','icon-sm icon-gold')} ${lvl.title}`;
+  document.getElementById('exp-display').textContent=`XP: ${G.exp}`;
+  renderStats();
+  document.getElementById('active-profile-chip').innerHTML=activeProfileChip();
+  if(lvl.boss){
+    document.getElementById('task-area').innerHTML=`<div class="boss-card mb-8"><div class="badge badge-red reason-row" style="margin-bottom:7px;display:inline-flex">${ic('bolt','icon-sm')} БОСС</div><h3 style="margin:5px 0">${lvl.bossName}</h3><div class="boss-hp"><div class="boss-hp-fill" id="boss-hp" style="width:100%"></div></div><p class="text-sm" style="margin-top:7px">${lvl.task}</p></div>`;
+  }else{
+    document.getElementById('task-area').innerHTML=`<div class="task-card"><div class="task-title reason-row" style="justify-content:center">${ic('clipboard','icon-sm')} ${lvl.title}</div><div class="task-text">${lvl.task}</div><div class="task-time reason-row" style="justify-content:center">${ic('timer','icon-sm')} ${lvl.time}с · мин. ${lvl.min} слов</div></div>`;
+  }
+  resetGameUI(lvl.time,'g-timer','g-mic','g-transcript','g-hint','g-tempo','g-volume','g-variety');
+  document.getElementById('g-result').className='hidden';
+  document.getElementById('g-result').innerHTML='';
+  document.getElementById('g-playback').className='playback-bar hidden';
+  clearViz('viz-canvas');
+}
+
+function resetGameUI(time,timerId,micId,transId,hintId,tempoId,volId,varId){
+  document.getElementById(timerId).textContent=time;
+  document.getElementById(timerId).className='timer';
+  document.getElementById(micId).className='mic-btn stopped';
+  document.getElementById(micId).innerHTML=ic('mic');
+  document.getElementById(transId).innerHTML='<span class="muted text-sm">Здесь появится речь...</span>';
+  document.getElementById(hintId).textContent='Нажми микрофон чтобы начать';
+  document.getElementById(tempoId).textContent='—';
+  document.getElementById(volId).textContent='—';
+  document.getElementById(varId).textContent='—';
+}
+
+function renderStats(){
+  document.getElementById('c-val').textContent=Math.round(G.charisma);
+  document.getElementById('t-val').textContent=Math.round(G.trust);
+  document.getElementById('e-val').textContent=Math.round(G.energy);
+  document.getElementById('c-bar').style.width=G.charisma+'%';
+  document.getElementById('t-bar').style.width=G.trust+'%';
+  document.getElementById('e-bar').style.width=G.energy+'%';
+}
+
+async function toggleGRec(){
+  if(G.speechDone)return;
+  if(!G.recording)await startGRec();
+  else{stopGRec();finishSpeech();}
+}
+
+async function startGRec(){
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    G.micStream=stream;
+    setupAudioAnalyser(stream,'viz-canvas','g-volume','g-variety',true);
+    setupMediaRecorder(stream,true);
+    setupSpeech('g-transcript',true);
+    G.recording=true;G.startTime=Date.now();
+    document.getElementById('g-mic').className='mic-btn recording';
+    document.getElementById('g-mic').innerHTML=ic('stop');
+    document.getElementById('g-hint').innerHTML=`Говори! Нажми ${ic('stop','icon-sm')} — стоп и результат`;
+    document.getElementById('viz-label').innerHTML=`${ic('dot','icon-sm icon-rec')} запись`;
+    const lvl=LEVELS[G.currentLevel]||LEVELS[0];
+    startCountdown(lvl.time,'g-timer',()=>{stopGRec();finishSpeech();},true);
+    if(!lvl.boss)scheduleProvocation();
+  }catch(e){toast('Разреши доступ к микрофону');console.error(e);}
+}
+
+function stopGRec(){
+  G.recording=false;clearGameTimers();cancelAnim(true);
+  stopMicStream(true);stopRecognizer(true);
+  if(G.mediaRec&&G.mediaRec.state!=='inactive')G.mediaRec.stop();
+  const prov=document.getElementById('prov-el');if(prov)prov.remove();
+  const mic=document.getElementById('g-mic');
+  if(mic){mic.className='mic-btn stopped';mic.innerHTML=ic('mic');}
+  document.getElementById('viz-label').textContent='микрофон';
+  clearViz('viz-canvas');
+}
+
+function clearGameTimers(){
+  if(G.timerInt){clearInterval(G.timerInt);G.timerInt=null;}
+  if(G.provTimer){clearTimeout(G.provTimer);G.provTimer=null;}
+}
+
+function finishSpeech(){
+  G.speechDone=true;
+  const lvl=LEVELS[G.currentLevel]||LEVELS[0];
+  const elapsed=Math.max(1,(Date.now()-G.startTime)/1000);
+  const words=G.transcript.trim().split(/\s+/).filter(Boolean);
+  const wc=words.length;const tempo=Math.round((wc/elapsed)*60);
+  const parasites=countParasites(G.transcript);
+  const avgVol=G.volSamples.length>0?G.volSamples.reduce((a,b)=>a+b,0)/G.volSamples.length:0;
+  const variety=G.pitchSamples.length>5?calcVariety(G.pitchSamples):50;
+  let dCharisma=0,dTrust=0;const reasons=[];
+  if(SR_OK){
+    if(wc>=lvl.min){dCharisma+=15;dTrust+=10;reasons.push(`${ic('check','icon-green')} Слов достаточно: ${wc} (+15 харизмы)`);}
+    else{dCharisma-=10;reasons.push(`${ic('x','icon-accent')} Мало слов: ${wc}/${lvl.min} (−10 харизмы)`);}
+    if(tempo>=100&&tempo<=160){dCharisma+=12;reasons.push(`${ic('check','icon-green')} Темп отличный: ${tempo} сл/мин (+12)`);}
+    else if(tempo>=80&&tempo<=180){reasons.push(`${ic('bolt','icon-gold')} Темп нормальный: ${tempo} сл/мин`);}
+    else if(tempo<80){dCharisma-=6;reasons.push(`${ic('warning','icon-accent')} Медленно: ${tempo} сл/мин (−6)`);}
+    else{dCharisma-=8;reasons.push(`${ic('warning','icon-accent')} Быстро: ${tempo} сл/мин (−8)`);}
+    const parasitePen=G.skills['leader-voice']?Math.floor(parasites):parasites*2;
+    if(parasites===0){dCharisma+=15;reasons.push(`${ic('check','icon-green')} Ноль паразитов! (+15)`);}
+    else{dCharisma-=parasitePen;reasons.push(`${ic('warning','icon-accent')} Паразиты: ${parasites}шт (−${parasitePen})`);}
+  }else{
+    dCharisma+=15;dTrust+=10;
+    reasons.push(`${ic('info','icon-muted')} Распознавание речи в этом браузере недоступно — оценка идёт по голосу: громкость, динамика, длительность`);
+  }
+  if(variety>65){dCharisma+=10;reasons.push(`${ic('check','icon-green')} Живая интонация: ${variety}% (+10)`);}
+  else if(variety<30){dCharisma-=8;reasons.push(`${ic('warning','icon-accent')} Монотонная речь (−8)`);}
+  if(avgVol>15&&avgVol<80){dTrust+=10;reasons.push(`${ic('check','icon-green')} Хорошая громкость (+10)`);}
+  else if(avgVol<=15){dTrust-=5;reasons.push(`${ic('warning','icon-accent')} Тихо (−5)`);}
+  if(elapsed/lvl.time>=0.7){dTrust+=15;reasons.push(`${ic('check','icon-green')} Время использовано (+15)`);}
+  else{dTrust-=5;reasons.push(`${ic('warning','icon-accent')} Мало говорил (−5)`);}
+  if(G.skills['strong-start']&&elapsed>=10){dTrust+=15;reasons.push(`${ic('rocket','icon-gold')} Мощный старт (+15)`);}
+  if(G.skills['strong-end']&&wc>lvl.min){dCharisma+=20;reasons.push(`${ic('burst','icon-gold')} Сильный финал (+20)`);}
+  if(G.provSuccess>0){dTrust+=G.provSuccess*10;reasons.push(`${ic('target','icon-gold')} Провокации: +${G.provSuccess*10}`);}
+  G.charisma=Math.min(100,Math.max(0,G.charisma+dCharisma));
+  G.trust=Math.min(100,Math.max(0,G.trust+dTrust));
+  G.energy=Math.max(10,G.energy-10);renderStats();
+  const wordGate=SR_OK?wc>=lvl.min:(elapsed/lvl.time>=0.6&&avgVol>10);
+  const won=G.charisma>=40&&G.trust>=40&&wordGate;
+  const expGain=Math.round(60+Math.max(0,dCharisma+dTrust)*1.5);
+  if(won){G.exp+=expGain;G.wins++;G.skillPoints+=1;if(G.exp>=G.playerLevel*250){G.playerLevel++;toast(`${ic('sparkle','icon-gold')} Уровень ${G.playerLevel}!`);}}
+  const oType=ORATOR_TYPES.find(t=>t.check({variety,parasites,tempo,words:wc}))||ORATOR_TYPES[ORATOR_TYPES.length-1];
+  const hlText=highlightParasites(G.transcript);
+  const isLast=G.currentLevel>=LEVELS.length-1;
+  document.getElementById('g-result').innerHTML=`
+    <div class="card card-glow" style="margin-top:14px">
+      <h3 style="margin-bottom:10px" class="reason-row">${won?ic('trophy','icon-gold'):ic('chart','icon-accent')} ${won?'Отличная речь!':'Результат'}</h3>
+      <div class="result-grid">
+        <div class="result-stat"><div class="result-num ${dCharisma>=0?'text-green':'text-accent'}">${dCharisma>=0?'+':''}${Math.round(dCharisma)}</div><div class="result-label">Харизма</div></div>
+        <div class="result-stat"><div class="result-num ${dTrust>=0?'text-green':'text-accent'}">${dTrust>=0?'+':''}${Math.round(dTrust)}</div><div class="result-label">Доверие</div></div>
+        <div class="result-stat"><div class="result-num text-blue">${wc}</div><div class="result-label">Слов</div></div>
+        <div class="result-stat"><div class="result-num ${parasites===0?'text-green':'text-accent'}">${parasites}</div><div class="result-label">Паразитов</div></div>
+      </div>
+      <div style="max-height:140px;overflow-y:auto;margin:10px 0">${reasons.map(r=>`<div class="text-xs reason-row" style="padding:3px 0;border-bottom:1px solid var(--border)">${r}</div>`).join('')}</div>
+      ${won?`<div class="badge badge-gold" style="margin-bottom:10px">+${expGain} XP · +1 очко навыка</div>`:''}
+      <div style="display:flex;align-items:center;gap:10px;margin:10px 0;padding:12px;background:var(--bg3);border-radius:10px">
+        <span style="font-size:2rem;color:var(--gold)">${ic(oType.emoji)}</span>
+        <div><div class="fw-bold">${oType.type}</div><div class="text-xs muted">${oType.desc}</div></div>
+      </div>
+      ${G.transcript?`<details><summary class="text-sm muted" style="cursor:pointer">Твоя речь</summary><div style="margin-top:8px;font-size:.84rem;line-height:1.6">${hlText}</div></details>`:''}
+      <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+        ${won?(isLast?`<button class="btn btn-gold btn-full" onclick="showScreen('s-menu');updateMenuRecord()">${ic('trophy')} Завершить</button>`:`<button class="btn btn-primary btn-full" onclick="nextLevel()">${ic('arrow-right')} Следующий уровень</button>`):`<button class="btn btn-secondary btn-full" onclick="loadLevel(G.currentLevel)">${ic('refresh')} Ещё раз</button>`}
+        <button class="btn btn-ghost btn-sm btn-full" onclick="renderProfileScreen();showScreen('s-profile')">${ic('gear')} Прокачка</button>
+      </div>
+    </div>
+    ${auditBlock({parasites,tempo,variety})}`;
+  document.getElementById('g-result').className='';
+  setTimeout(()=>document.getElementById('g-result').scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+function nextLevel(){
+  if(G.currentLevel<LEVELS.length-1)loadLevel(G.currentLevel+1);
+  else{showScreen('s-menu');updateMenuRecord();}
+}
+
+// ═══════════════════════════════════════════
+// PROVOCATION
+// ═══════════════════════════════════════════
+
+function scheduleProvocation(){G.provTimer=setTimeout(showProvocation,12000+Math.random()*18000);}
+
+function showProvocation(){
+  if(!G.recording||G.provActive)return;
+  G.provActive=true;G.provCount++;
+  const text=PROVOCATIONS[Math.floor(Math.random()*PROVOCATIONS.length)];
+  const el=document.createElement('div');
+  el.id='prov-el';el.className='provocation';
+  el.innerHTML=`<div class="reason-row" style="margin-bottom:10px;justify-content:center"><svg class="icon icon-accent"><use href="#i-warning"/></svg> ${text}</div>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <button class="btn btn-sm" style="background:#fff;color:var(--accent)" onclick="handleProv(true)">${ic('check')} Ответил!</button>
+      <button class="btn btn-sm btn-ghost" onclick="handleProv(false)">${ic('x')} Растерялся</button>
+    </div>`;
+  document.body.appendChild(el);
+}
+
+function handleProv(ok){
+  G.provActive=false;
+  const el=document.getElementById('prov-el');if(el)el.remove();
+  const bonus=G.skills['hook']?20:10;
+  if(ok){G.provSuccess++;G.trust=Math.min(100,G.trust+bonus);renderStats();toast(`${ic('check','icon-green')} +${bonus} доверия!`);}
+  else{G.trust=Math.max(0,G.trust-15);renderStats();toast(`${ic('x','icon-accent')} −15 доверия`);}
+  if(G.recording)scheduleProvocation();
+}
+
+// ═══════════════════════════════════════════
+// PLAYBACK
+// ═══════════════════════════════════════════
+
+function gPlayback(){
+  if(!G.audioUrl)return;
+  const a=new Audio(G.audioUrl);
+  const btn=document.getElementById('g-play-btn');
+  btn.innerHTML=ic('pause');a.play();a.onended=()=>btn.innerHTML=ic('play');
+}
+
+function pvpPlayback(){
+  if(!P.audioUrl)return;
+  const a=new Audio(P.audioUrl);
+  const btn=document.getElementById('pvp-play-btn');
+  btn.innerHTML=ic('pause');a.play();a.onended=()=>btn.innerHTML=ic('play');
+}
+
+// ═══════════════════════════════════════════
+// PVP MODE
+// ═══════════════════════════════════════════
+
+function rotatePvpTopic(){pvpTopicIdx=(pvpTopicIdx+1)%ALL_TOPICS.length;document.getElementById('pvp-topic-text').textContent=ALL_TOPICS[pvpTopicIdx];}
+
+function startPvp(){
+  P.name1=document.getElementById('pvp-n1').value||'Игрок 1';
+  P.name2=document.getElementById('pvp-n2').value||'Игрок 2';
+  P.topic=ALL_TOPICS[pvpTopicIdx];P.phase=0;P.results=[null,null];
+  showScreen('s-pvp-game');loadPvpPhase();
+}
+
+function loadPvpPhase(){
+  const ph=P.phase;const name=ph===0?P.name1:P.name2;
+  P.recording=false;P.transcript='';P.wordCount=0;
+  P.audioChunks=[];P.audioUrl=null;P.pitchSamples=[];P.volSamples=[];
+  document.getElementById('pvp-round-badge').innerHTML=`${ic('swords','icon-sm')} Раунд ${ph+1} / 2`;
+  document.getElementById('pvp-n1-g').textContent=P.name1;
+  document.getElementById('pvp-n2-g').textContent=P.name2;
+  const p1el=document.getElementById('pvp-p1-g');const p2el=document.getElementById('pvp-p2-g');
+  p1el.className='pvp-player'+(ph===0?' active':P.results[0]?' done':'');
+  p2el.className='pvp-player'+(ph===1?' active':P.results[1]?' done':'');
+  document.getElementById('pvp-s1-g').innerHTML=P.results[0]?ic('check','icon-sm icon-green')+' Готово':ph===0?'Говорит...':'ждёт';
+  document.getElementById('pvp-s2-g').innerHTML=P.results[1]?ic('check','icon-sm icon-green')+' Готово':ph===1?'Говорит...':'ждёт';
+  document.getElementById('pvp-sc1-g').textContent=P.results[0]?P.results[0].score:'—';
+  document.getElementById('pvp-sc2-g').textContent=P.results[1]?P.results[1].score:'—';
+  document.getElementById('pvp-task-disp').innerHTML=`<div class="task-title reason-row" style="justify-content:center">${ic('clipboard','icon-sm')} Тема дуэли</div><div class="task-text">${P.topic}</div><div class="task-time reason-row" style="justify-content:center">${ic('timer','icon-sm')} 60 сек · <b>${name}</b> — твоя очередь</div>`;
+  resetGameUI(60,'pvp-timer','pvp-mic','pvp-transcript','pvp-hint','pvp-tempo','pvp-volume','pvp-variety');
+  document.getElementById('pvp-playback').className='playback-bar hidden';
+  document.getElementById('pvp-speech-result').className='hidden';
+  document.getElementById('pvp-speech-result').innerHTML='';
+  clearViz('pvp-canvas');
+}
+
+async function togglePvpRec(){
+  const res=document.getElementById('pvp-speech-result');
+  if(res.className!=='hidden')return;
+  if(!P.recording)await startPvpRec();
+  else{stopPvpRec();finishPvpSpeech();}
+}
+
+async function startPvpRec(){
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    P.micStream=stream;
+    setupAudioAnalyser(stream,'pvp-canvas','pvp-volume','pvp-variety',false);
+    setupMediaRecorder(stream,false);
+    setupSpeech('pvp-transcript',false);
+    P.recording=true;P.startTime=Date.now();
+    document.getElementById('pvp-mic').className='mic-btn recording';
+    document.getElementById('pvp-mic').innerHTML=ic('stop');
+    const name=P.phase===0?P.name1:P.name2;
+    document.getElementById('pvp-hint').innerHTML=`${name} говорит... ${ic('stop','icon-sm')} — стоп`;
+    document.getElementById('pvp-viz-label').innerHTML=`${ic('dot','icon-sm icon-rec')} запись`;
+    startCountdown(60,'pvp-timer',()=>{stopPvpRec();finishPvpSpeech();},false);
+  }catch(e){toast('Разреши доступ к микрофону');}
+}
+
+function stopPvpRec(){
+  P.recording=false;
+  if(P.timerInt){clearInterval(P.timerInt);P.timerInt=null;}
+  cancelAnim(false);stopMicStream(false);stopRecognizer(false);
+  if(P.mediaRec&&P.mediaRec.state!=='inactive')P.mediaRec.stop();
+  document.getElementById('pvp-mic').className='mic-btn stopped';
+  document.getElementById('pvp-mic').innerHTML=ic('mic');
+  document.getElementById('pvp-viz-label').textContent='микрофон';
+  clearViz('pvp-canvas');
+}
+
+function finishPvpSpeech(){
+  const elapsed=Math.max(1,(Date.now()-P.startTime)/1000);
+  const wc=P.transcript.trim().split(/\s+/).filter(Boolean).length;
+  const tempo=Math.round((wc/elapsed)*60);
+  const parasites=countParasites(P.transcript);
+  const variety=P.pitchSamples.length>5?calcVariety(P.pitchSamples):50;
+  const avgVol=P.volSamples.length>0?P.volSamples.reduce((a,b)=>a+b,0)/P.volSamples.length:0;
+  let score=100;
+  if(wc>=30)score+=30;else score+=wc;
+  if(tempo>=100&&tempo<=160)score+=25;else if(tempo>=80&&tempo<=180)score+=10;
+  score-=parasites*4;score+=Math.round(variety*0.25);
+  if(avgVol>15)score+=10;if(elapsed/60>=0.7)score+=20;
+  score=Math.max(0,Math.round(score));
+  const result={name:P.phase===0?P.name1:P.name2,score,words:wc,tempo,parasites,variety:Math.round(variety),elapsed:Math.round(elapsed)};
+  P.results[P.phase]=result;
+  document.getElementById(P.phase===0?'pvp-sc1-g':'pvp-sc2-g').textContent=score;
+  document.getElementById('pvp-speech-result').innerHTML=`
+    <div class="card" style="margin-top:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h3>${result.name}</h3><div class="badge badge-gold">Счёт: ${score}</div>
+      </div>
+      <div class="result-grid" style="grid-template-columns:1fr 1fr 1fr 1fr">
+        <div class="result-stat"><div class="result-num">${wc}</div><div class="result-label">слов</div></div>
+        <div class="result-stat"><div class="result-num">${tempo}</div><div class="result-label">сл/мин</div></div>
+        <div class="result-stat"><div class="result-num ${parasites===0?'text-green':'text-accent'}">${parasites}</div><div class="result-label">паразитов</div></div>
+        <div class="result-stat"><div class="result-num">${result.variety}%</div><div class="result-label">динамика</div></div>
+      </div>
+      ${P.phase===0
+        ?`<button class="btn btn-primary btn-full" style="margin-top:12px" onclick="startPvpPhase2()">${ic('arrow-right')} Теперь ${P.name2}</button>`
+        :`<button class="btn btn-gold btn-full" style="margin-top:12px" onclick="showPvpResults()">${ic('trophy')} Итоги дуэли</button>`}
+    </div>`;
+  document.getElementById('pvp-speech-result').className='';
+  document.getElementById('pvp-pb-name').textContent=`Послушать — ${result.name}`;
+  document.getElementById('pvp-playback').className='playback-bar';
+  setTimeout(()=>document.getElementById('pvp-speech-result').scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+function startPvpPhase2(){P.phase=1;loadPvpPhase();}
+
+function showPvpResults(){
+  const r1=P.results[0],r2=P.results[1];
+  if(!r1||!r2)return;
+  const winner=r1.score>r2.score?r1:r2.score>r1.score?r2:null;
+  const margin=Math.abs(r1.score-r2.score);
+  const getType=r=>ORATOR_TYPES.find(t=>t.check({variety:r.variety,parasites:r.parasites,tempo:r.tempo,words:r.words}))||ORATOR_TYPES[ORATOR_TYPES.length-1];
+  const t1=getType(r1),t2=getType(r2);
+  const cmpRows=[['Счёт',r1.score,r2.score,'higher'],['Слов',r1.words,r2.words,'higher'],['Темп',r1.tempo,r2.tempo,'optimal'],['Паразиты',r1.parasites,r2.parasites,'lower'],['Динамика',r1.variety+'%',r2.variety+'%','higher']].map(([lbl,v1,v2,better])=>{
+    const n1=parseFloat(v1),n2=parseFloat(v2);
+    const w1=better==='higher'?n1>n2:better==='lower'?n1<n2:Math.abs(n1-130)<Math.abs(n2-130);
+    const w2=better==='higher'?n2>n1:better==='lower'?n2<n1:Math.abs(n2-130)<Math.abs(n1-130);
+    return `<div class="cmp-row"><div class="cmp-val ${w1?'cmp-win':''}">${v1}</div><div class="cmp-lbl">${lbl}</div><div class="cmp-val ${w2?'cmp-win':''}">${v2}</div></div>`;
+  }).join('');
+  document.getElementById('pvp-final').innerHTML=`
+    <div class="type-card" style="margin-bottom:14px">
+      <div class="type-emoji icon-gold">${winner?ic('trophy'):ic('handshake')}</div>
+      <div class="type-title">${winner?winner.name+' победил!':'Ничья!'}</div>
+      <p class="muted text-sm">${winner?(margin<=20?'Очень близко!':margin<=50?'Уверенная победа':'Сокрушительная победа!'):'Идеальный поединок'}</p>
+    </div>
+    <div class="pvp-halves mb-16">
+      ${[r1,r2].map((r,i)=>`<div class="pvp-player ${winner&&winner.name===r.name?'active':''}"><div style="font-size:1.4rem;color:var(--gold)">${ic([t1,t2][i].emoji)}</div><div class="fw-bold text-sm">${r.name}</div><div class="text-xs muted">${[t1,t2][i].type}</div><div class="text-gold fw-bold" style="font-size:1.7rem;margin:7px 0">${r.score}</div><div class="text-xs muted">${r.words}сл · ${r.parasites}пар</div></div>`).join('<div class="pvp-vs">VS</div>')}
+    </div>
+    <div class="card"><h3 class="mb-8 reason-row"><svg class="icon icon-accent"><use href="#i-chart"/></svg> Детали</h3>${cmpRows}</div>
+    ${auditBlock(winner?{parasites:winner.parasites,tempo:winner.tempo,variety:winner.variety}:null)}`;
+  showScreen('s-pvp-results');
+}
+
+// ═══════════════════════════════════════════
+// SHARED AUDIO ENGINE (G + P)
+// ═══════════════════════════════════════════
+
+function setupAudioAnalyser(stream,canvasId,volId,varId,isMain){
+  const ctx=new(window.AudioContext||window.webkitAudioContext)();
+  if(ctx.state==='suspended')ctx.resume().catch(()=>{});
+  const analyser=ctx.createAnalyser();
+  analyser.fftSize=256;analyser.smoothingTimeConstant=0.75;
+  ctx.createMediaStreamSource(stream).connect(analyser);
+  if(isMain){G.audioCtx=ctx;G.analyser=analyser;}else{P.audioCtx=ctx;P.analyser=analyser;}
+  drawWaveform(canvasId,analyser,volId,varId,isMain);
+}
+
+function drawWaveform(canvasId,analyser,volId,varId,isMain){
+  const canvas=document.getElementById(canvasId);
+  if(!canvas||!analyser)return;
+  const ctx=canvas.getContext('2d');
+  const bufLen=analyser.fftSize;const data=new Uint8Array(bufLen);
+  function draw(){
+    const frameId=requestAnimationFrame(draw);
+    if(isMain)G.animFrame=frameId;else P.animFrame=frameId;
+    analyser.getByteTimeDomainData(data);
+    const w=canvas.offsetWidth||300;const h=canvas.offsetHeight||68;
+    canvas.width=w;canvas.height=h;
+    ctx.fillStyle='#16213e';ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle='#2a2a4a';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,h/2);ctx.lineTo(w,h/2);ctx.stroke();
+    let sumSq=0;for(let i=0;i<bufLen;i++){const v=(data[i]-128)/128;sumSq+=v*v;}
+    const rms=Math.sqrt(sumSq/bufLen);const volPct=Math.round(rms*100);
+    const volEl=document.getElementById(volId);if(volEl)volEl.textContent=volPct+'%';
+    if(isMain){G.volSamples.push(volPct);if(G.volSamples.length>300)G.volSamples.shift();}
+    else{P.volSamples.push(volPct);if(P.volSamples.length>300)P.volSamples.shift();}
+    const intensity=Math.min(1,rms*4);
+    const grad=ctx.createLinearGradient(0,0,w,0);
+    grad.addColorStop(0,`rgba(233,69,96,${.25+intensity*.75})`);
+    grad.addColorStop(.5,`rgba(255,215,0,${.25+intensity*.75})`);
+    grad.addColorStop(1,`rgba(0,255,136,${.25+intensity*.75})`);
+    ctx.lineWidth=2+intensity;ctx.strokeStyle=grad;
+    if(rms>0.05){ctx.shadowBlur=8;ctx.shadowColor='rgba(233,69,96,.4)';}else ctx.shadowBlur=0;
+    ctx.beginPath();const sw=w/bufLen;let x=0;
+    for(let i=0;i<bufLen;i++){const v=data[i]/128;const y=(v*h)/2;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);x+=sw;}
+    ctx.stroke();
+    if(rms>0.02){
+      let zc=0;for(let i=1;i<bufLen;i++){if((data[i-1]<128&&data[i]>=128)||(data[i-1]>=128&&data[i]<128))zc++;}
+      const pp=zc*55;
+      if(isMain){G.pitchSamples.push(pp);if(G.pitchSamples.length>150)G.pitchSamples.shift();}
+      else{P.pitchSamples.push(pp);if(P.pitchSamples.length>150)P.pitchSamples.shift();}
+      const v2=calcVariety(isMain?G.pitchSamples:P.pitchSamples);
+      const varEl=document.getElementById(varId);if(varEl)varEl.textContent=v2+'%';
+    }
+  }
+  draw();
+}
+
+function clearViz(canvasId){
+  const canvas=document.getElementById(canvasId);if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const w=canvas.offsetWidth||300;const h=canvas.offsetHeight||68;
+  canvas.width=w;canvas.height=h;
+  ctx.fillStyle='#16213e';ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='#2a2a4a';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,h/2);ctx.lineTo(w,h/2);ctx.stroke();
+}
+
+function cancelAnim(isMain){
+  const id=isMain?G.animFrame:P.animFrame;
+  if(id)cancelAnimationFrame(id);
+  if(isMain)G.animFrame=null;else P.animFrame=null;
+}
+
+function setupMediaRecorder(stream,isMain){
+  const chunks=[];let mr;
+  try{mr=REC_MIME?new MediaRecorder(stream,{mimeType:REC_MIME}):new MediaRecorder(stream);}
+  catch(e){try{mr=new MediaRecorder(stream);}catch(e2){return;}}
+  mr.ondataavailable=e=>{if(e.data&&e.data.size>0)chunks.push(e.data);};
+  mr.onstop=()=>{
+    const blob=new Blob(chunks,{type:mr.mimeType||REC_MIME||'audio/webm'});const url=URL.createObjectURL(blob);
+    if(isMain){G.audioUrl=url;document.getElementById('g-playback').className='playback-bar';}
+    else{P.audioUrl=url;document.getElementById('pvp-playback').className='playback-bar';}
+  };
+  mr.start();
+  if(isMain){G.mediaRec=mr;G.audioChunks=chunks;}else{P.mediaRec=mr;P.audioChunks=chunks;}
+}
+
+function setupSpeech(transId,isMain){
+  if(!SR_OK)return;
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  const r=new SR();r.lang='ru-RU';r.continuous=true;r.interimResults=true;
+  let final='';
+  r.onresult=e=>{
+    let interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)final+=t+' ';else interim+=t;}
+    const full=final+interim;
+    const el=document.getElementById(transId);
+    if(el)el.innerHTML=highlightParasites(full)||'<span class="muted text-sm">Говори...</span>';
+    if(isMain){G.transcript=full;G.wordCount=full.trim().split(/\s+/).filter(Boolean).length;const mins=(Date.now()-G.startTime)/60000;const tempo=mins>0?Math.round(G.wordCount/mins):0;document.getElementById('g-tempo').textContent=tempo;}
+    else{P.transcript=full;P.wordCount=full.trim().split(/\s+/).filter(Boolean).length;const mins=(Date.now()-P.startTime)/60000;const tempo=mins>0?Math.round(P.wordCount/mins):0;document.getElementById('pvp-tempo').textContent=tempo;}
+  };
+  r.onerror=e=>{if(e.error!=='no-speech')console.warn(e.error);};
+  r.onend=()=>{const still=isMain?G.recording:P.recording;if(still)try{r.start();}catch(e){}};
+  try{r.start();}catch(e){}
+  if(isMain)window._gRecog=r;else window._pvpRecog=r;
+}
+
+function stopRecognizer(isMain){
+  const r=isMain?window._gRecog:window._pvpRecog;if(r)try{r.stop();}catch(e){}
+  if(isMain)window._gRecog=null;else window._pvpRecog=null;
+}
+
+function stopMicStream(isMain){
+  const s=isMain?G.micStream:P.micStream;if(s)s.getTracks().forEach(t=>t.stop());
+  if(isMain)G.micStream=null;else P.micStream=null;
+  const ctx=isMain?G.audioCtx:P.audioCtx;
+  if(ctx&&ctx.state!=='closed')ctx.close().catch(()=>{});
+  if(isMain)G.audioCtx=null;else P.audioCtx=null;
+}
+
+function startCountdown(secs,elId,onEnd,isMain){
+  let left=secs;const el=document.getElementById(elId);
+  const intId=setInterval(()=>{
+    left--;
+    if(el){el.textContent=left;el.className=left<=10?'timer warning':'timer';}
+    if(left<=0){clearInterval(intId);if(isMain)G.timerInt=null;else P.timerInt=null;onEnd();}
+  },1000);
+  if(isMain)G.timerInt=intId;else P.timerInt=intId;
+}
+
+// ═══════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════
+
+function calcVariety(s){
+  if(s.length<3)return 50;
+  const mean=s.reduce((a,b)=>a+b,0)/s.length;
+  const variance=s.reduce((a,b)=>a+Math.pow(b-mean,2),0)/s.length;
+  return Math.min(100,Math.round((Math.sqrt(variance)/Math.max(mean,1))*180));
+}
+
+function highlightParasites(text){
+  if(!text)return '';
+  // Split into tokens preserving spaces, highlight matched parasite tokens
+  const sorted=[...PARASITES].sort((a,b)=>b.length-a.length);
+  let r=text;
+  sorted.forEach(p=>{
+    // escape special chars, match as word (case-insensitive)
+    const esc=p.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    try{r=r.replace(new RegExp('(^|\\s)('+esc+')(\\s|$|[,!?.])','gi'),'$1<span class="parasite-hl">$2</span>$3');}
+    catch(e){}
+  });
+  return r;
+}
+
+// ═══════════════════════════════════════════
+// AUDIT BLOCK
+// ═══════════════════════════════════════════
+
+function auditBlock(hints){
+  // hints: {parasites, tempo, variety, words} — makes it personal
+  const lines=[];
+  if(hints){
+    if(hints.parasites>3)lines.push({icon:'bug',text:'Слова-паразиты — они есть, и их можно убрать за 2 недели'});
+    if(hints.tempo<80||hints.tempo>180)lines.push({icon:'bolt',text:'Темп речи — слишком быстро или медленно, это лечится'});
+    if(hints.variety<35)lines.push({icon:'music',text:'Монотонная интонация — голос должен "рисовать", не читать'});
+  }
+  const zone=lines.length>0
+    ?`<div style="margin-bottom:14px">${lines.map(l=>`<div style="display:flex;align-items:start;gap:8px;padding:5px 0;border-bottom:1px solid rgba(180,120,255,.15)"><span style="flex-shrink:0;color:#c48eff">${ic(l.icon)}</span><span style="font-size:.82rem;color:var(--text)">${l.text}</span></div>`).join('')}</div>`
+    :'';
+  return `<div class="audit-block">
+    <div class="audit-block-badge reason-row">${ic('cap','icon-sm')} Профессиональный аудит</div>
+    <div class="audit-headline">Хочешь исправить это по-настоящему?</div>
+    <div class="audit-sub">Игра показала твои зоны роста. С правильным тренером их закрывают за недели — не годы.</div>
+    ${zone}
+    <div class="audit-skills">
+      <span class="audit-skill-tag reason-row">${ic('letters','icon-sm')} Дикция</span>
+      <span class="audit-skill-tag reason-row">${ic('mouth','icon-sm')} Артикуляция</span>
+      <span class="audit-skill-tag reason-row">${ic('palette','icon-sm')} Окраска голоса</span>
+      <span class="audit-skill-tag reason-row">${ic('mask','icon-sm')} Сценическая речь</span>
+      <span class="audit-skill-tag reason-row">${ic('wind','icon-sm')} Дыхание</span>
+      <span class="audit-skill-tag reason-row">${ic('ruler','icon-sm')} Ритм и паузы</span>
+    </div>
+    <div class="audit-divider"></div>
+    <div class="audit-person">
+      <div class="audit-avatar">${ic('mic')}</div>
+      <div>
+        <div class="audit-name">Инга Брик</div>
+        <div class="audit-creds">Федеральный диктор · Актриса дубляжа · 10+ лет опыта<br>ТОП-100 дикторов России · озвучка La Mer, Clarins, Estée Lauder</div>
+      </div>
+    </div>
+    <a href="https://t.me/+dazVAx9-BvViZmNi" class="audit-cta-primary" target="_blank">
+      ${ic('sparkle')} Войти в академию Pro golos
+    </a>
+    <a href="https://t.me/Inga_Brik" class="audit-cta-ghost" target="_blank">
+      ${ic('chat')} Написать Инге лично
+    </a>
+    <a href="https://t.me/progolosbrik" class="audit-cta-ghost" target="_blank" style="margin-top:-2px">
+      ${ic('sparkle')} Читать канал Pro golos
+    </a>
+    <div class="audit-note">Обучение онлайн · любой уровень · реальный результат</div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+
+const mf={name:'SPEAK OR DIE',short_name:'SpeakOrDie',start_url:'.',display:'standalone',background_color:'#0d0d1a',theme_color:'#0d0d1a',icons:[]};
+const ml=document.createElement('link');ml.rel='manifest';ml.href='data:application/json,'+encodeURIComponent(JSON.stringify(mf));document.head.appendChild(ml);
+
+if('serviceWorker' in navigator){
+  const sw=`self.addEventListener('install',()=>self.skipWaiting());self.addEventListener('activate',()=>clients.claim());self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
+  const blob=new Blob([sw],{type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+}
+
+document.getElementById('pvp-topic-text').textContent=ALL_TOPICS[0];
+updateMenuRecord();
+
+// Capability banner (Windows / Android / iPhone aware)
+(function initCaps(){
+  const n=document.getElementById('cap-note');
+  if(!n)return;
+  if(!GUM_OK){
+    n.innerHTML=`${ic('warning','icon-sm')} Микрофон недоступен — открой страницу по HTTPS в Chrome / Safari`;
+    n.style.color='var(--accent)';
+    return;
+  }
+  if(!SR_OK){
+    n.innerHTML=IS_IOS
+      ?`${ic('mic','icon-sm')} iPhone/iPad: оценка по голосу (громкость · динамика · темп)`
+      :`${ic('mic','icon-sm')} Микрофон OK · распознавание речи в этом браузере недоступно — оценка по голосу`;
+  }
+})();
+
+console.log('🎤 SPEAK OR DIE v4.1 — Pro golos Academy · cross-platform',{IS_IOS,IS_ANDROID,SR_OK,GUM_OK,REC_MIME});
+</script>
+</body>
+</html>
