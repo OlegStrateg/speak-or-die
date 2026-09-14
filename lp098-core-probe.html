@@ -1,0 +1,15 @@
+<!doctype html><html><head><meta charset="utf-8"><title>LP098 core probe</title></head><body><pre id="s">loading</pre><script type="module">
+const s=document.getElementById('s');
+try{
+  const core=await import('https://esm.sh/@practics/tryon-core@0.2.0?bundle');
+  s.textContent='core loaded\n'+Object.keys(core).sort().join(', ')+'\n';
+  const workers=await import('https://esm.sh/@practics/tryon-core@0.2.0/workers?bundle');
+  s.textContent+='workers loaded: '+Object.keys(workers).join(', ')+'\n';
+  const w=workers.createMattingWorker();
+  s.textContent+='matting worker created\n';
+  w.onmessage=(e)=>{s.textContent+='message: '+JSON.stringify(e.data)+'\n';};
+  w.onerror=(e)=>{s.textContent+='worker error: '+(e.message||e.type)+'\n';};
+  w.postMessage({type:'init',device:('gpu' in navigator?'webgpu':'wasm')});
+  setTimeout(()=>{s.textContent+='probe waiting complete\n';},15000);
+}catch(e){s.textContent+='ERROR: '+(e?.stack||e)+'\n';}
+</script></body></html>
